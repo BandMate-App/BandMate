@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itMessages"
+        android:icon="@drawable/ic_baseline_message_24"
+        android:title="Messages" />
+    <item
+        android:id="@+id/itFeed"
+        android:icon="@drawable/ic_baseline_feed_24"
+        android:title="Feed" />
+    <item
+        android:id="@+id/itProfile"
+        android:icon="@drawable/ic_baseline_manage_accounts_24"
+        android:title="Profile" />
+</menu>

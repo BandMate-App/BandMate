@@ -16,9 +16,18 @@ allprojects {
     repositories {
         google()
         jcenter()
+
+        //BACK 4 APP PARSE SDK
+        maven { url "https://jitpack.io" }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+//EXTENSIONS FOR BOTTOM NAVIGATION
+ext {
+    appCompatVersion = '1.0.0'
+    designSupportVersion = '1.0.0'
+    recyclerViewVersion = '1.0.0'
 }
