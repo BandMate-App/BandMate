@@ -54,6 +54,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //TODO: Change RecyclerView to CardView(I think?) and implement swipe to match
         context=getContext();
         rvFeed = view.findViewById(R.id.rvFeed);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
