@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- TODO set up android automatic backup properties, set backupContent and allowBackup to true for now -->
     <application
+        android:fullBackupContent="true"
         android:name=".ParseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,10 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BandMate">
-        <activity
-            android:name=".BottomNavActivity"
-            android:label="@string/title_activity_bottom_nav"></activity>
-        <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
