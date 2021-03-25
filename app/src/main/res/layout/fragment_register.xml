@@ -1,218 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- TODO FINISH MULTIPLE INSTRUMENT SELECTOR, PRIMARY INSTRUMENT SPINNER, FIX DIALOG BUTTON TEXT LOCATION -->
+<!-- TODO FINISH MULTIPLE INSTRUMENT SELECTOR, FIX DIALOG BUTTON TEXT LOCATION -->
+<!-- TODO Add done button to input, as of now have to manually close the system keyboard to see the bottom of the form.
+-->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterFragment">
+    tools:context=".fragments.RegisterFragment">
 
-    <ScrollView
-        android:id="@+id/registerScrollView"
+
+
+    <!-- Outer Vertical Layout -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
-        <!-- Outer Vertical Layout -->
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_gravity="center_vertical"
+        <EditText
+            android:id="@+id/registerUsername"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="10dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:hint="Username">
+        </EditText>
 
 
-            <!-- Inner layout 1: Firstname/Lastname -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:padding="10dp">
+        <!-- Inner layout 1: Firstname/Lastname -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
 
 
-            <EditText
-                android:id="@+id/registerFirstName"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:hint="First Name">
+        <EditText
+            android:id="@+id/registerFirstName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:hint="First Name">
 
-            </EditText>
+        </EditText>
 
-            <EditText
-                android:id="@+id/registerLastName"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:hint="Last Name">
+        <EditText
+            android:id="@+id/registerLastName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:hint="Last Name">
 
-            </EditText>
-
-            </LinearLayout>
-
-            <EditText
-                android:padding="10dp"
-                android:id="@+id/registerEmail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Email"
-                android:textAlignment="center">
-
-            </EditText>
-
-            <EditText
-                android:id="@+id/registerPhoneNumber"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Phone Number"
-                android:inputType="phone"
-                android:padding="10dp"
-                android:textAlignment="center"></EditText>
-
-
-            <EditText
-                android:padding="10dp"
-                android:id="@+id/registerPassword"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Password"
-                android:textAlignment="center"
-                android:inputType="textPassword">
-
-            </EditText>
-
-            <!--
-            Get month,day year
-            -->
-            <LinearLayout
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_height="match_parent">
-
-                <Spinner
-                    android:id="@+id/Month"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                </Spinner>
-
-                <Spinner
-                    android:id="@+id/Day"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                </Spinner>
-
-                <Spinner
-                    android:id="@+id/Year"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                </Spinner>
-            </LinearLayout>
-
-            <RadioGroup
-                android:id="@+id/genderSelector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <RadioButton
-                    android:id="@+id/registerMale"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:text="Male"
-                    android:textAlignment="center">
-
-                </RadioButton>
-
-                <RadioButton
-                    android:id="@+id/registerFemale"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Female"
-                    android:textAlignment="center">
-
-                </RadioButton>
-
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:text="Other"
-                    android:textAlignment="center">
-
-                </RadioButton>
-
-            </RadioGroup>
-
-            <Spinner
-                android:padding="10dp"
-                android:id="@+id/registerPrimaryInstrument"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </Spinner>
-
-
-            <!-- This needs to contain a group of checkboxes, user picks up to 5 secondary instruments
-            -->
-            <ListView
-                android:padding="10dp"
-                android:id="@+id/registerInstrumentPreference"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </ListView>
-
-            <!--
-            Should we get zip code here? Could be a good placeholder until we figure out geolocation
-            -->
+        </EditText>
 
         </LinearLayout>
-    </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/registerSignUpButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <EditText
+            android:id="@+id/registerEmail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="Sign Up">
+            android:hint="Email"
+            android:textAlignment="center">
 
-        </Button>
+        </EditText>
 
-        <Button
-            android:id="@+id/registerCancelButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <EditText
+            android:id="@+id/registerPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_margin="10dp"
-            android:text="Cancel">
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:textAlignment="center">
 
-        </Button>
+        </EditText>
+
+
+        <EditText
+            android:id="@+id/registerPassword"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="Enter Password"
+            android:inputType="textPassword"
+            android:textAlignment="center">
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/registerPasswordConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="Confirm Password"
+            android:inputType="textPassword"
+            android:textAlignment="center">
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/datePickerPrompt"
+            android:hint="Enter Birthday"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+        </EditText>
+
+
+        <RadioGroup
+            android:id="@+id/genderSelector"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <RadioButton
+                android:id="@+id/registerMale"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="Male"
+                android:textAlignment="center">
+
+            </RadioButton>
+
+            <RadioButton
+                android:id="@+id/registerFemale"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Female"
+                android:textAlignment="center">
+
+            </RadioButton>
+
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="Other"
+                android:textAlignment="center">
+
+            </RadioButton>
+
+        </RadioGroup>
+
+        <Spinner
+            android:id="@+id/registerPrimaryInstrument"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:entries="@array/instruments"
+            android:textAlignment="center">
+        </Spinner>
+
+        <!--
+        I Think it makes more sense to let the user pick 3 top genres
+        put this here for now
+        -->
+        <Spinner
+            android:id="@+id/registerPrimaryGenre"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:entries="@array/genres"
+            android:textAlignment="center">
+        </Spinner>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some genre">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some genre">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some genre">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some genre">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some genre">
+
+            </CheckBox>
+        </LinearLayout>
+
+
+        <!-- This needs to contain a group of checkboxes, user picks up to 3 secondary instruments
+        -->
+        <LinearLayout
+            android:id="@+id/registerInstrumentPreference"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some instrument">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some instrument">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some instrument">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some instrument">
+
+            </CheckBox>
+
+            <CheckBox
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="some instrument">
+
+            </CheckBox>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_margin="1dp"
+                android:id="@+id/registerSignUpButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Sign Up">
+
+            </Button>
+
+            <Button
+                android:layout_margin="1dp"
+                android:id="@+id/registerCancelButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Cancel">
+
+            </Button>
+        </LinearLayout>
+
+        <!--
+        Should we get zip code here? Could be a good placeholder until we figure out geolocation
+        -->
     </LinearLayout>
-</RelativeLayout>
+
+
+</ScrollView>

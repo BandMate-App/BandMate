@@ -2,19 +2,19 @@ package edu.fsu.cs.bandmate;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.fsu.cs.bandmate.fragments.FeedFragment;
+import edu.fsu.cs.bandmate.fragments.LoginFragment;
+import edu.fsu.cs.bandmate.fragments.MainFragment;
 import edu.fsu.cs.bandmate.fragments.MessagesFragment;
 import edu.fsu.cs.bandmate.fragments.ProfileFragment;
+import edu.fsu.cs.bandmate.fragments.RegisterFragment;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
         LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     }
 
     @Override
-    public void onRegisterComplete() {
+    public void onRegisterComplete(User user) {
         m_loggedIn = true;
         onFeed();
         getSupportFragmentManager().executePendingTransactions();

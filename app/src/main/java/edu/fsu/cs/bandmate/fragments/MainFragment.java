@@ -1,4 +1,4 @@
-package edu.fsu.cs.bandmate;
+package edu.fsu.cs.bandmate.fragments;
 
 import android.os.Bundle;
 
@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import android.content.Context;
+
+import edu.fsu.cs.bandmate.R;
 
 
 /**
