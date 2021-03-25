@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginFragment">
+
+    <!--    Current thoughts:
+    Probably get rid of the text views, I think it will look better with hints in a text view, will
+    fix after the rest of the app has a basic ui
+    -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--
+        Outer Vertical Linear layout, contains two horizontal layouts containing a text view and
+        edit text each
+        -->
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+
+            <!-- Inner horizontal layout 1: Username -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Username">
+
+                </TextView>
+
+                <EditText
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:id="@+id/onLoginUsername"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                </EditText>
+
+            </LinearLayout>
+
+            <!-- Inner Horizontal layout: password -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Password">
+
+                </TextView>
+
+                <EditText
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:id="@+id/onLoginPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                </EditText>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:gravity="bottom|center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/onLoginLogin"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Login">
+
+        </Button>
+
+        <Button
+            android:id="@+id/onLoginCancel"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel">
+
+        </Button>
+
+    </LinearLayout>
+
+</RelativeLayout>
