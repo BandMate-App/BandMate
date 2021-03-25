@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- TODO set up android automatic backup properties, set backupContent and allowBackup to true for now -->
     <application
+        android:fullBackupContent="true"
         android:name=".ParseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
