@@ -1,4 +1,4 @@
-package edu.fsu.cs.bandmate;
+package edu.fsu.cs.bandmate.fragments;
 
 import android.os.Bundle;
 
@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import android.content.Context;
 import android.widget.EditText;
+
+import edu.fsu.cs.bandmate.R;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 

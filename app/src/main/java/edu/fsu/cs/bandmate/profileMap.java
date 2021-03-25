@@ -1,3 +1,5 @@
+package edu.fsu.cs.bandmate;
+
 /*
  Helper class, maps user profile data to an int to make storing easier.
  */

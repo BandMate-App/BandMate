@@ -1,10 +1,27 @@
+package edu.fsu.cs.bandmate;
+
+import com.parse.ParseClassName;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
 import java.util.List;
 /*
  Stores all necessary user profile information
 
  Uses profile map to map gender, instrument, and secondary instruments to integers
  */
-public class userProfile {
+@ParseClassName("userProfile")
+public class userProfile extends ParseObject {
+
+/*
+Default Constructor sets all variables to invalid values
+*/
+    public userProfile(){
+    }
+
+    private String uName;
     private String fName;
     private String lName;
     private String eMail;
@@ -12,27 +29,45 @@ public class userProfile {
     private String password;
     private int gender;
     private int primaryInstrument;
-    private List<Integer> secondaryInstruments;
+    private ArrayList<Integer> secondaryInstruments;
 
-    /*
-     Default Constructor sets all variables to invalid values
-     */
-    userProfile(){
-        fName = "";
-        lName = "";
-        eMail = "";
-        phoneNumber = "";
-        password = "";
-        gender = -1;
-        primaryInstrument = -1;
-        secondaryInstruments.add(-1);
+/*
+ Parsing Constants
+ */
+    public static final String KEY_PROFILEPICTURE="ProfilePicture";
+    public static final String KEY_USER="user";
+    public static final String KEY_FIRSTNAME="FirstName";
+    public static final String KEY_lASTNAME="LastName";
+    public static final String KEY_PRIMARY_INSTRUMENT = "PrimaryInstrument";
+    public static final String KEY_SECONDARY_INSTRUMENTS = "SecondaryInstruments";
+    public static final String KEY_GENRE="Genre";
+    public static final String KEY_MP3 = "Mp3";
+
+/*
+ PARSING FUNCTIONS
+ */
+
+    public ParseFile getImage(){
+        return getParseFile(KEY_PROFILEPICTURE);
     }
 
-    /*
-     Parameterized Constructor
-     */
-    userProfile(String fName,String lName, String eMail, String phoneNumber,String password,
-                int gender,int primaryInstrument,List<Integer> secondaryInstruments){
+    public ParseUser getUser(){
+        return getParseUser(KEY_USER);
+    }
+
+    public String getName(){
+        return (String) getParseUser(KEY_USER).get(KEY_FIRSTNAME);
+    }
+
+    public String getGenre(){return getString(KEY_GENRE);}
+
+
+
+/*
+ Parameterized Constructor
+ */
+    public userProfile(String fName,String lName, String eMail, String phoneNumber,String password,
+                int gender,int primaryInstrument,ArrayList<Integer> secondaryInstruments){
         this.fName = fName;
         this.lName = lName;
         this.eMail = eMail;
@@ -43,6 +78,10 @@ public class userProfile {
         this.secondaryInstruments = secondaryInstruments;
     }
 
+
+/*
+ SET FUNCTIONS
+ */
     public void seteMail(String eMail) {
         this.eMail = eMail;
     }
@@ -71,10 +110,13 @@ public class userProfile {
         this.primaryInstrument = primaryInstrument;
     }
 
-    public void setSecondaryInstruments(List<Integer> secondaryInstruments) {
+    public void setSecondaryInstruments(ArrayList<Integer> secondaryInstruments) {
         this.secondaryInstruments = secondaryInstruments;
     }
 
+/*
+ GET FUNCTIONS
+ */
     public int getGender() {
         return gender;
     }
