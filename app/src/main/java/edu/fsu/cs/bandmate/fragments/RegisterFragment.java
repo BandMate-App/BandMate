@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import android.content.Context;
@@ -20,16 +19,19 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
-import edu.fsu.cs.bandmate.MainActivity;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
-import edu.fsu.cs.bandmate.userProfile;
+import edu.fsu.cs.bandmate.User;
 import edu.fsu.cs.bandmate.profileMap;
+
+/*
+TODO:
+      Update form complete to check for all input,
+      make a validate input method that checks for proper email,birthday etc
+ */
 
 public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
 
@@ -171,14 +173,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         return true;
     }
 
-    private Profile createUser(){
+    private User createUser(){
         RadioButton genderButton = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
         profileMap profileMap = new profileMap();
         ArrayList<Integer> secondary = new ArrayList<>();
         Integer pInstrument = profileMap.MapInstrument(primaryInstrument.getSelectedItem().toString().trim());
         Integer selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
         secondary.add(-1); //TODO implement multiple choice picking for secondary instrument
-        return new Profile(fName.getText().toString().trim(),lName.getText().toString().trim(),
+        return new User(fName.getText().toString().trim(),lName.getText().toString().trim(),
                 eMail.getText().toString().trim(),password.getText().toString().trim(),phoneNumber.getText().toString().trim(),selectedGender,
                 -1,secondary);
     }
@@ -194,7 +196,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     public interface RegisterFragmentListener{
-        void onRegisterComplete(Profile user);
+        void onRegisterComplete(User user);
         void onCancel();
     }
 
@@ -231,7 +233,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     */
     if (formComplete()) {
         // TODO Check for existing user, insert new user into database
-        Profile user = createUser();
+        User user = createUser();
         listener.onRegisterComplete(user);
     }
     else{

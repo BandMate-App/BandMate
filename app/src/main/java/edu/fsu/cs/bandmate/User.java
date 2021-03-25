@@ -12,13 +12,12 @@ import java.util.List;
 
  Uses profile map to map gender, instrument, and secondary instruments to integers
  */
-@ParseClassName("userProfile")
-public class userProfile extends ParseObject {
+public class User{
 
 /*
 Default Constructor sets all variables to invalid values
 */
-    public userProfile(){
+    public User(){
     }
 
     private String uName;
@@ -43,31 +42,12 @@ Default Constructor sets all variables to invalid values
     public static final String KEY_GENRE="Genre";
     public static final String KEY_MP3 = "Mp3";
 
-/*
- PARSING FUNCTIONS
- */
-
-    public ParseFile getImage(){
-        return getParseFile(KEY_PROFILEPICTURE);
-    }
-
-    public ParseUser getUser(){
-        return getParseUser(KEY_USER);
-    }
-
-    public String getName(){
-        return (String) getParseUser(KEY_USER).get(KEY_FIRSTNAME);
-    }
-
-    public String getGenre(){return getString(KEY_GENRE);}
-
-
 
 /*
  Parameterized Constructor
  */
-    public userProfile(String fName,String lName, String eMail, String phoneNumber,String password,
-                int gender,int primaryInstrument,ArrayList<Integer> secondaryInstruments){
+    public User(String fName, String lName, String eMail, String phoneNumber, String password,
+                int gender, int primaryInstrument, ArrayList<Integer> secondaryInstruments){
         this.fName = fName;
         this.lName = lName;
         this.eMail = eMail;

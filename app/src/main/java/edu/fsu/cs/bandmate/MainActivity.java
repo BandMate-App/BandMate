@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     }
 
     @Override
-    public void onRegisterComplete(Profile user) {
+    public void onRegisterComplete(User user) {
         m_loggedIn = true;
         onFeed();
         getSupportFragmentManager().executePendingTransactions();
