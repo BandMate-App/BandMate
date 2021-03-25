@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -100,11 +101,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         /*
          TODO Switch to the matching interface of the app with bottom nav
          */
+        Intent intent = new Intent(this, BottomNavActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public void onRegisterComplete() {
-
+        Intent intent = new Intent(this, BottomNavActivity.class);
+        startActivity(intent);
     }
 
     @Override
