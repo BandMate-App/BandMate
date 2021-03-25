@@ -85,4 +85,8 @@ public class FeedFragment extends Fragment {
             }
         });
     }
+
+    public interface feedListener{
+        void profileView();
+    }
 }
