@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import edu.fsu.cs.bandmate.MainActivity;
+import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.userProfile;
 import edu.fsu.cs.bandmate.profileMap;
@@ -170,14 +171,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         return true;
     }
 
-    private userProfile createUser(){
+    private Profile createUser(){
         RadioButton genderButton = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
         profileMap profileMap = new profileMap();
         ArrayList<Integer> secondary = new ArrayList<>();
         Integer pInstrument = profileMap.MapInstrument(primaryInstrument.getSelectedItem().toString().trim());
         Integer selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
         secondary.add(-1); //TODO implement multiple choice picking for secondary instrument
-        return new userProfile(fName.getText().toString().trim(),lName.getText().toString().trim(),
+        return new Profile(fName.getText().toString().trim(),lName.getText().toString().trim(),
                 eMail.getText().toString().trim(),password.getText().toString().trim(),phoneNumber.getText().toString().trim(),selectedGender,
                 -1,secondary);
     }
@@ -193,7 +194,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     public interface RegisterFragmentListener{
-        void onRegisterComplete(userProfile user);
+        void onRegisterComplete(Profile user);
         void onCancel();
     }
 
@@ -230,7 +231,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     */
     if (formComplete()) {
         // TODO Check for existing user, insert new user into database
-        userProfile user = createUser();
+        Profile user = createUser();
         listener.onRegisterComplete(user);
     }
     else{
