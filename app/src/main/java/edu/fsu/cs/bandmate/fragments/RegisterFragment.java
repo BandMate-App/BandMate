@@ -160,9 +160,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-/*
- TODO, more in depth error checking, password matching, valid birthday/phonenumber/email, etc, add toasts to prompt user
- */
     private Boolean formComplete(){
         boolean valid=true;
         if(fName.getText().toString().trim().isEmpty()) {
@@ -270,8 +267,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
 
         if (formComplete()) {
-            //Dummy user object for the listener //TODO do we need this user object?
-            User newUser = new User();
             //This little ninny closes the keyboard
             View view = getActivity().getCurrentFocus();
             if (view != null) {
@@ -313,6 +308,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                 if(e!=null){
                                     Toast.makeText(getContext(), "Error Logging in", Toast.LENGTH_SHORT).show();
                                 }else {
+                                    /*
+                                      TODO, Do we need this object in addition to the Profile Object or should we get rid of User class?
+                                     */
+                                    User newUser = createUser();
                                     listener.onRegisterComplete(newUser);
                                 }
                             }
