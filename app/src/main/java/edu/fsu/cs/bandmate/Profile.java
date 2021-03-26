@@ -1,9 +1,11 @@
 package edu.fsu.cs.bandmate;
 
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 
 @ParseClassName("Profile")
@@ -27,5 +29,13 @@ public class Profile extends ParseObject {
 
     public String getGenre(){return getString(KEY_GENRE);}
 
-
+    public void putUser(ParseUser user){
+        this.put(KEY_USER,user);
+    }
+    public void putName(String name){
+        this.put(KEY_NAME,name);
+    }
+    public void putGenre(String genre){
+        this.put(KEY_GENRE,genre);
+    }
 }

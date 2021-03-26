@@ -6,11 +6,13 @@ import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseUser;
 
 import edu.fsu.cs.bandmate.fragments.FeedFragment;
 import edu.fsu.cs.bandmate.fragments.MessagesFragment;
@@ -18,6 +20,7 @@ import edu.fsu.cs.bandmate.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
         LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener {
+    public static final String TAG=MainActivity.class.getCanonicalName();
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
 
@@ -41,7 +44,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
 
         onMain();
 
-            bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        Log.i(TAG,"User already logged in, proceding to home screen");
+        if(ParseUser.getCurrentUser()!=null){
+            onValidLogin();
+        }
 
 
     }
@@ -65,17 +73,13 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     @Override
     public void onValidLogin() {
         m_loggedIn = true;
-        onFeed();
-        getSupportFragmentManager().executePendingTransactions();
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        bottomNavigationView.setSelectedItemId(R.id.itFeed);
     }
 
     @Override
     public void onRegisterComplete() {
         m_loggedIn = true;
-        onFeed();
-        getSupportFragmentManager().executePendingTransactions();
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        bottomNavigationView.setSelectedItemId(R.id.itProfile);
     }
 
     @Override
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     }
 
     public void onFeed(){
+        bottomNavigationView.setVisibility(View.VISIBLE);
         FeedFragment fragment = new FeedFragment();
         String tag = FeedFragment.class.getCanonicalName();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
@@ -115,6 +120,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
                 onOpenProfile();
                 break;
         }
-        return false;
+        return true;
     }
 }

@@ -78,6 +78,15 @@
 
 
             <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Username"
+                android:inputType="textPersonName"
+                android:textAlignment="center" />
+
+            <EditText
                 android:padding="10dp"
                 android:id="@+id/registerPassword"
                 android:layout_width="match_parent"
