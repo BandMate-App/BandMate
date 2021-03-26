@@ -27,7 +27,10 @@
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:hint="Username">
+            android:hint="Username"
+            android:ems="10"
+            android:inputType="textPersonName"
+            >
         </EditText>
 
 

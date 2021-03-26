@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,17 @@ import android.widget.Button;
 
 import android.content.Context;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import edu.fsu.cs.bandmate.R;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
+    public static final String TAG=LoginFragment.class.getCanonicalName();
     LoginFragmentListener listener;
     EditText username,password;
     Button login,cancel;
@@ -95,9 +102,22 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        /*
-         TODO validate login input and query database
-         */
+        String uname= username.getText().toString();
+        String pass= password.getText().toString();
+
+        ParseUser.logInInBackground(uname, pass, new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if(e!=null){
+                    if(e.getCode()==ParseException.OBJECT_NOT_FOUND){
+                        username.setError("Invalid Username or Password");
+                    }else
+                        Toast.makeText(getActivity(), "Error Logging In", Toast.LENGTH_SHORT).show();
+                }else{
+                    listener.onValidLogin();
+                }
+            }
+        });
     }
 
     public interface LoginFragmentListener{

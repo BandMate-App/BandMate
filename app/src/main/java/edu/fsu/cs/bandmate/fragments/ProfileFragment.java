@@ -2,6 +2,15 @@ package edu.fsu.cs.bandmate.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import android.widget.Toast;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import edu.fsu.cs.bandmate.Profile;
+
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -21,6 +30,8 @@ public class ProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public ParseUser user;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -62,5 +73,27 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //If the user doesn't have a profile, create a profile for them and upload it
+        user = ParseUser.getCurrentUser();
+        if(user.getParseObject("myProfile")==null){
+            Profile prof = new Profile();
+            prof.putUser(user);
+            prof.putName(user.getString("Name"));
+            prof.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e!=null){
+                        Toast.makeText(getActivity(), "Error creating profile", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity(), "Profile successfully created", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 }

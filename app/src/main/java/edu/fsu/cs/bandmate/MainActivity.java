@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -15,11 +16,13 @@ import edu.fsu.cs.bandmate.fragments.MainFragment;
 import edu.fsu.cs.bandmate.fragments.MessagesFragment;
 import edu.fsu.cs.bandmate.fragments.ProfileFragment;
 import edu.fsu.cs.bandmate.fragments.RegisterFragment;
+import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
         LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener {
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
+    public static final String TAG=MainActivity.class.getCanonicalName();
 
 
     public void onMain(){
@@ -40,9 +43,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
 
 
         onMain();
-
-            bottomNavigationView = findViewById(R.id.bottom_navigation);
-
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        Log.i(TAG,"User already logged in, proceding to home screen");
+        if(ParseUser.getCurrentUser()!=null){
+            //onValidLogin();
+        }
 
     }
 
@@ -103,18 +108,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        switch(item.getItemId()){
-            case R.id.itFeed:
+        int id = item.getItemId();
+        if(id == R.id.itFeed) {
                 onFeed();
-                break;
-            case R.id.itMessages:
-                onOpenMessages();
-                break;
-            case R.id.itProfile:
-                onOpenProfile();
-                break;
+                return true;
         }
-        return false;
+        if(id == R.id.itMessages) {
+                onOpenMessages();
+                return true;
+        }
+        if(id == R.id.itProfile) {
+            onOpenProfile();
+            return true;
+        }
+    return false;
     }
 }
