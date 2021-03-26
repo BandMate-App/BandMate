@@ -55,27 +55,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         /*
          Set on click listeners
          */
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*
-                TODO Set logic to query the database and check for an exisiting username/password pair
-                 */
-
-                /*
-                 TODO go to the main application screen after successful login
-                 */
-                listener.onValidLogin();
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onCancel();
-            }
-        });
+        login.setOnClickListener(this);
+        cancel.setOnClickListener(this);
 
         return rootView;
     }
@@ -101,7 +82,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        int id = v.getId();
+        if(id == R.id.onLoginCancel){
+            listener.onCancel();
+        }
+        if(id == R.id.onLoginLogin){
+            onLogin();
+        }
 
+
+    }
+
+    public void onLogin(){
         String uname= username.getText().toString();
         String pass= password.getText().toString();
 
