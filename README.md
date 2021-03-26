@@ -59,7 +59,7 @@ I'm too lazy to fill all this out right now, maybe I'll do it later or maybe not
 
 ## Wireframes
 [Add picture of your hand sketched wireframes in this section]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+<img src="https://github.com/BandMate-App/BandMate/blob/master/BandmateWireframePNG.png?raw=true" width=600>
 
 
 ## Schema 
