@@ -11,7 +11,7 @@ Original App Design Project - README Template
 
 ## Overview
 ### Description
-I'm too lazy to fill all this out right now, maybe I'll do it later or maybe not idk
+BandMate allows users to connect with other musicians around them, based on genre, skills, and other deciding factors. If two users end up matching eachother they can then connect and message eachother.
 
 
 ## Product Spec
@@ -44,7 +44,7 @@ I'm too lazy to fill all this out right now, maybe I'll do it later or maybe not
  * Stream
   * Holds feed of other users to match with
 
-### 3. Navigation
+### 3. Navigation -----WIP
 
 **Tab Navigation** (Tab to Screen)
 
@@ -52,7 +52,7 @@ I'm too lazy to fill all this out right now, maybe I'll do it later or maybe not
 * [fill out your second tab]
 * [fill out your third tab]
 
-**Flow Navigation** (Screen to Screen)
+**Flow Navigation** (Screen to Screen) ----WIP
 
 * [list first screen here]
    * [list screen navigation here]
@@ -62,15 +62,14 @@ I'm too lazy to fill all this out right now, maybe I'll do it later or maybe not
    * ...
 
 ## Wireframes
-[Add picture of your hand sketched wireframes in this section]
 <img src="https://github.com/BandMate-App/BandMate/blob/master/BandmateWireframePNG.png?raw=true" width=600>
 
 
-## Schema 
-[This section will be completed in Unit 9]
-### Models
+## Schema ----WIP
+
+### Models ------WIP
 [Add table of models]
-### Networking
+### Networking -----WIP
 - [Add list of network requests by screen ]
 - [Create basic snippets for each Parse network request]
 - [OPTIONAL: List endpoints if using existing API such as Yelp]
