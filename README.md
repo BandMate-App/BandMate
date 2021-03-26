@@ -33,12 +33,16 @@ I'm too lazy to fill all this out right now, maybe I'll do it later or maybe not
 
 ### 2. Screen Archetypes
 
-* [list first screen here]
-   * [list associated required story here]
+* Login/Register
+   * Users can log in / sign up
    * ...
-* [list second screen here]
-   * [list associated required story here]
-   * ...
+* Detail/Profile
+   * view other users profiles with more detail
+   * View own profile details
+ * Creation/profile
+   * Edit own profile
+ * Stream
+  * Holds feed of other users to match with
 
 ### 3. Navigation
 
