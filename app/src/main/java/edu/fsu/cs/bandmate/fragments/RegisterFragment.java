@@ -1,6 +1,8 @@
 package edu.fsu.cs.bandmate.fragments;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.inputmethod.InputMethodManager;
@@ -10,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import android.content.Context;
@@ -21,9 +25,13 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
+import edu.fsu.cs.bandmate.MainActivity;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.User;
@@ -36,27 +44,29 @@ import com.parse.SignUpCallback;
 
 /*
 TODO:
-      Update form complete to check for all input,
-      make a validate input method that checks for proper email,birthday etc
+      Update form complete to check for all input
+      Make first item of spinners not selectable
  */
 
-public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
+public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener{
     public static final String KEY_PHONE="Phone",
             KEY_NAME="Name";
 
     private RegisterFragmentListener listener;
 
-    private EditText fName,lName,eMail,password,phoneNumber,datePrompt,etUsername;;
+    private EditText fName,lName,eMail,password,phoneNumber,datePrompt,etUsername;
+    private EditText secondaryGenrePrompt, secondaryInstrumentPrompt;
 
     private RadioGroup genderSelector;
 
     private ListView secondaryInstruments;
 
-    private Spinner primaryInstrument;
+    private Spinner primaryInstrument, primaryGenre;
 
     private Button signUp,cancel;
 
     private DatePickerDialog datePicker;
+
 
 
 
@@ -89,12 +99,15 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         phoneNumber = rootView.findViewById(R.id.registerPhoneNumber);
         datePrompt = rootView.findViewById(R.id.datePickerPrompt);
         etUsername = rootView.findViewById(R.id.registerUsername);
+        secondaryGenrePrompt = rootView.findViewById(R.id.registerSecondaryGenres);
+        secondaryInstrumentPrompt = rootView.findViewById(R.id.registerSecondaryInstruments);
 
         /*
          Spinner/RadioGroups
          */
         genderSelector = rootView.findViewById(R.id.genderSelector);
         primaryInstrument = rootView.findViewById(R.id.registerPrimaryInstrument);
+        primaryGenre = rootView.findViewById(R.id.registerPrimaryGenre);
         //secondaryInstruments = rootView.findViewById(R.id.registerInstrumentPreference);
 
         /*
@@ -108,9 +121,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
          TODO Set up list of instruments/genres programmatically,
           maybe need a dialog to prevent the screen from getting crowded
          */
-        String [] instrument;
+        String [] instruments;
         String [] genres;
-        instrument = getResources().getStringArray(R.array.instruments);
+        instruments = getResources().getStringArray(R.array.instruments);
         genres = getResources().getStringArray(R.array.genres);
 
         /*
@@ -119,6 +132,16 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         signUp.setOnClickListener(this);
         cancel.setOnClickListener(this);
         datePrompt.setOnFocusChangeListener(this);
+        secondaryGenrePrompt.setOnFocusChangeListener(this);
+        secondaryInstrumentPrompt.setOnFocusChangeListener(this);
+        secondaryGenrePrompt.setOnClickListener(this);
+        secondaryInstrumentPrompt.setOnClickListener(this);
+
+        /*
+         Disable keyboard input on secondary choice selection
+         */
+        secondaryInstrumentPrompt.setShowSoftInputOnFocus(false);
+        secondaryGenrePrompt.setShowSoftInputOnFocus(false);
 
 
         /*
@@ -126,6 +149,40 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
            In the adapter disable the first item in each spinner, set item 0 selected listener to do nothing,
            set first item text to grey
          */
+        ArrayAdapter<String> genreAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,genres);
+        ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments);
+
+        primaryGenre.setAdapter(genreAdapter);
+        primaryInstrument.setAdapter(instrumentAdapter);
+
+        // If the selected item is on the secondary list it removes it from secondary
+        primaryGenre.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        if (view != null)
+                            onSelectPrimaryGenre();
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        Toast.makeText(getContext(),"Nothing selected",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // If the selected item is on the secondary list it removes it from secondary
+        primaryInstrument.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, View view, int position, long id) {
+                        if (view != null)
+                            onSelectPrimaryInstrument();
+                    }
+
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        Toast.makeText(getContext(),"Nothing selected",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
 
         return rootView;
     }
@@ -158,6 +215,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         else if(id== R.id.registerCancelButton){
             onCancel();
         }
+        else if(id == R.id.registerSecondaryInstruments)
+            onSelectSecondaryInstrument();
+
+        else if(id == R.id.registerSecondaryGenres)
+            onSelectSecondaryGenre();
     }
 
     private Boolean formComplete(){
@@ -214,13 +276,71 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     /*
-     Used for birthday prompt edit text, if it becomes the focus it opens a date picker dialog
+     Used for birthday, secondary instrument, and secondary genres
+     Could change this to buttons if we think it looks better
      */
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && v.getId() == datePrompt.getId()){
             onEnterDate();
         }
+        if (hasFocus && v.getId() == secondaryGenrePrompt.getId())
+            onSelectSecondaryGenre();
+
+        if(hasFocus && v.getId() == secondaryInstrumentPrompt.getId())
+            onSelectSecondaryInstrument();
+    }
+
+
+    /*
+     Check that the user has not already chosen this instrument as a secondary Instrument.
+     Remove from secondary Instruments if they have
+     */
+    private void onSelectPrimaryInstrument() {
+        String selected = primaryInstrument.getSelectedItem().toString();
+        String secondary = secondaryInstrumentPrompt.getHint().toString();
+        String[] secondaryItems = secondary.split(" ");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < secondaryItems.length;i++){
+            if(!selected.equals(secondaryItems[i])){
+                stringBuilder.append(secondaryItems[i]);
+                stringBuilder.append(" ");
+            }
+            else{
+                Toast.makeText(getContext(),"Cannot be both primary and secondary \nRemoved "+ selected+" from secondary genres",Toast.LENGTH_SHORT).show();
+
+            }
+        }
+        if(stringBuilder.toString().equals(""))
+            secondaryInstrumentPrompt.setHint("Enter any other instruments you like to play"); //TODO replace with R.string.message
+        else
+            secondaryInstrumentPrompt.setHint(stringBuilder.toString());
+    }
+
+    /*
+     Check that the user has not already chosen this instrument as a secondary Genre.
+     Remove from secondary genres if they have
+     */
+    private void onSelectPrimaryGenre() {
+
+        String selected = primaryGenre.getSelectedItem().toString();
+        String secondary = secondaryGenrePrompt.getHint().toString();
+        String[] secondaryItems = secondary.split(" ");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < secondaryItems.length;i++){
+            if(!selected.equals(secondaryItems[i])){
+                stringBuilder.append(secondaryItems[i]);
+                stringBuilder.append(" ");
+            }
+            else{
+                Toast.makeText(getContext(),"Cannot be both primary and secondary \nRemoved "+ selected+" from secondary genres",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        if(stringBuilder.toString().equals(""))
+            secondaryGenrePrompt.setHint("Enter any other genres you like to play"); //TODO replace with R.string.message
+        else
+            secondaryGenrePrompt.setHint(stringBuilder.toString());
     }
 
     public interface RegisterFragmentListener{
@@ -322,7 +442,144 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             });
 
         }
-}
+    }
+
+    private void onSelectSecondaryGenre(){
+        /*
+         Initialize Variables to be shown in the dialog
+         */
+        String[] genres = Arrays.copyOfRange(getResources().getStringArray(R.array.genres),1,getResources().getStringArray(R.array.genres).length);
+        boolean[] checkedItems = new boolean[genres.length];
+        final List<String> genreList = Arrays.asList(genres);
+        final int[] count = {0};      // Keep track of how many choices the user selects
+
+        /*
+         Initialize AlertDialog builder
+         */
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Select up to 3 secondary genres");
+        builder.setMultiChoiceItems(genres, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String primary = primaryGenre.getSelectedItem().toString();
+                if(isChecked) {
+                    // Check that the user has not exceeded the maximum number of allowed secondary choices
+                    if (count[0] < 3) {
+
+                        // Check that the user is not trying to choose their primary instrument
+                        if(primary.equals(genres[which])){
+                            Toast.makeText(getContext(),"Cannot select primary instrument",Toast.LENGTH_SHORT).show();
+                            ((AlertDialog)dialog).getListView().setItemChecked(which,false);
+                            checkedItems[which] = false;
+                        }
+                        // Set the item as checked
+                        else {
+                            ((AlertDialog) dialog).getListView().setItemChecked(which, true);
+                            checkedItems[which] = isChecked;
+                            String currentItem = genres[which];
+                            count[0] += 1;
+                        }
+                    }
+                    // The user has exceeded their maximum allowed choices
+                    else {
+                        Toast.makeText(getContext(), "Choose up to 3 secondary generes", Toast.LENGTH_SHORT).show();
+                        ((AlertDialog)dialog).getListView().setItemChecked(which,false);
+                        checkedItems[which] = false;
+                    }
+                }
+                // The user has unchecked an option
+                else {
+                    count[0]--;
+                    checkedItems[which] = false;
+                }
+            }
+        });
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                StringBuilder selectedGenres = new StringBuilder();
+                for(int i= 0; i <checkedItems.length;i++)
+                    if(checkedItems[i]) {
+                        selectedGenres.append(genres[i]);
+                        selectedGenres.append(" ");
+                    }
+                secondaryGenrePrompt.setHint(selectedGenres.toString());
+            }
+        });
+        builder.setCancelable(true);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void onSelectSecondaryInstrument(){
+                /*
+         Initialize Variables to be shown in the dialog
+         */
+        String[] instruments = Arrays.copyOfRange(getResources().getStringArray(R.array.instruments),1,getResources().getStringArray(R.array.instruments).length);
+        boolean[] checkedItems = new boolean[instruments.length];
+        final int[] count = {0};      // Keep track of how many choices the user selects
+
+        /*
+         Initialize AlertDialog builder
+         */
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Select up to 3 secondary Instruments");
+        builder.setMultiChoiceItems(instruments, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String primary = primaryInstrument.getSelectedItem().toString();
+
+                if(isChecked) {
+                    // Check that the user has not exceeded the maximum number of allowed secondary choices
+                    if (count[0] < 3) {
+
+                        // Check that the user is not trying to choose their primary instrument
+                        if(primary.equals(instruments[which])){
+                            Toast.makeText(getContext(),"Cannot select primary instrument",Toast.LENGTH_SHORT).show();
+                            ((AlertDialog)dialog).getListView().setItemChecked(which,false);
+                            checkedItems[which] = false;
+                        }
+                        // Set the item as checked
+                        else {
+                            ((AlertDialog) dialog).getListView().setItemChecked(which, true);
+                            checkedItems[which] = isChecked;
+                            String currentItem = instruments[which];
+                            count[0] += 1;
+                        }
+                    }
+                    // The user has exceeded their maximum allowed choices
+                    else {
+                       Toast.makeText(getContext(), "Choose up to 3 secondary generes", Toast.LENGTH_SHORT).show();
+                        ((AlertDialog)dialog).getListView().setItemChecked(which,false);
+                        checkedItems[which] = false;
+                    }
+                }
+                // The user has unchecked an option
+                else {
+                    count[0]--;
+                    checkedItems[which] = false;
+                }
+            }
+        });
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                StringBuilder selectedInstruments = new StringBuilder();
+                // Get each checked item
+                for(int i= 0; i <checkedItems.length;i++)
+                    if(checkedItems[i]){
+                        selectedInstruments.append(instruments[i]);
+                        selectedInstruments.append(" ");
+                    }
+                // Set the hint to the selected choices
+                secondaryInstrumentPrompt.setHint(selectedInstruments.toString());
+            }
+        });
+        builder.setCancelable(true);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
 
 /*
  Goes back to MainFragment

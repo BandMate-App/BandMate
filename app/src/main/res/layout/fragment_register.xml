@@ -2,22 +2,21 @@
 
 <!-- TODO FINISH MULTIPLE INSTRUMENT SELECTOR, FIX DIALOG BUTTON TEXT LOCATION -->
 <!-- TODO Add done button to input, as of now have to manually close the system keyboard to see the bottom of the form.
--->
+     TODO Don't like the way this looks on larger screens, doesn't fill the screen-->
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.RegisterFragment">
+   tools:context=".fragments.RegisterFragment">
 
-
-
-    <!-- Outer Vertical Layout -->
+        <!-- Outer Vertical Layout -->
     <LinearLayout
+        android:gravity="center"
         android:orientation="vertical"
-        android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
 
         <EditText
@@ -185,6 +184,26 @@
             android:textAlignment="center">
         </Spinner>
 
+        <EditText
+            android:id="@+id/registerSecondaryInstruments"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="Enter any other instruments you play?"
+            android:textAlignment="center">
+
+        </EditText>
+
+        <EditText
+            android:id="@+id/registerSecondaryGenres"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="Enter any other genres you like to play"
+            android:textAlignment="center">
+        </EditText>
+
+        <!--
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -233,8 +252,8 @@
         </LinearLayout>
 
 
-        <!-- This needs to contain a group of checkboxes, user picks up to 3 secondary instruments
-        -->
+         This needs to contain a group of checkboxes, user picks up to 3 secondary instruments
+
         <LinearLayout
             android:id="@+id/registerInstrumentPreference"
             android:layout_width="match_parent"
@@ -283,6 +302,7 @@
             </CheckBox>
 
         </LinearLayout>
+        -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -310,11 +330,8 @@
 
             </Button>
         </LinearLayout>
-
-        <!--
-        Should we get zip code here? Could be a good placeholder until we figure out geolocation
-        -->
     </LinearLayout>
+
 
 
 </ScrollView>

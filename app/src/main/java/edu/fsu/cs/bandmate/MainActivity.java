@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         Log.i(TAG,"User already logged in, proceding to home screen");
         if(ParseUser.getCurrentUser()!=null){
-            onValidLogin();
+            //onValidLogin();
         }
 
     }
