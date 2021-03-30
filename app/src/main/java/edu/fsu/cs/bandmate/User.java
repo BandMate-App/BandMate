@@ -46,8 +46,9 @@ Default Constructor sets all variables to invalid values
 /*
  Parameterized Constructor
  */
-    public User(String fName, String lName, String eMail, String phoneNumber, String password,
+    public User(String uName, String fName, String lName, String eMail, String phoneNumber, String password,
                 int gender, int primaryInstrument, ArrayList<Integer> secondaryInstruments){
+        this.uName = uName;
         this.fName = fName;
         this.lName = lName;
         this.eMail = eMail;

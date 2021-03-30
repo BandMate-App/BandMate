@@ -3,6 +3,7 @@ package edu.fsu.cs.bandmate.fragments;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.inputmethod.InputMethodManager;
@@ -23,9 +24,11 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -42,20 +45,21 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-/*
-TODO:
-      Update form complete to check for all input
-      Make first item of spinners not selectable
- */
+import org.jetbrains.annotations.NotNull;
+
 
 public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener{
-    public static final String KEY_PHONE="Phone",
-            KEY_NAME="Name";
+    public static final String KEY_PHONE="Phone",KEY_NAME="Name",KEY_USER="User",
+            KEY_PRIMARY_INSTRUMENT="Primary Instrument",KEY_PRIMARY_GENRE="Primary Genre",
+            KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",KEY_BIRTHDAY="Birthday",
+            KEY_EMAIL = "Email";
+
+    final private int MIN_AGE = 13; // Minimum age according to COPPA
 
     private RegisterFragmentListener listener;
 
     private EditText fName,lName,eMail,password,phoneNumber,datePrompt,etUsername;
-    private EditText secondaryGenrePrompt, secondaryInstrumentPrompt;
+    private EditText secondaryGenrePrompt, secondaryInstrumentPrompt, birthday;
 
     private RadioGroup genderSelector;
 
@@ -101,6 +105,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         etUsername = rootView.findViewById(R.id.registerUsername);
         secondaryGenrePrompt = rootView.findViewById(R.id.registerSecondaryGenres);
         secondaryInstrumentPrompt = rootView.findViewById(R.id.registerSecondaryInstruments);
+        birthday = datePrompt;
 
         /*
          Spinner/RadioGroups
@@ -145,12 +150,55 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
 
         /*
-         TODO
-           In the adapter disable the first item in each spinner, set item 0 selected listener to do nothing,
-           set first item text to grey
+         Genre Spinner adapter, sets the first element to be not selectable and it's text to gray
          */
-        ArrayAdapter<String> genreAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,genres);
-        ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments);
+        ArrayAdapter<String> genreAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,genres){
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                    return false;
+                else
+                    return true;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
+                View view = super.getDropDownView(position,convertView,parent);
+                TextView textView = (TextView)view;
+                if (position == 0)
+                {
+                    textView.setTextColor(Color.GRAY);
+                }
+                else
+                    textView.setTextColor(Color.BLACK);
+                return view;
+            }
+
+        };
+         /*
+         Instrument Spinner adapter, sets the first element to be not selectable and it's text to gray
+         */
+        ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments){
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                    return false;
+                else
+                    return true;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
+                View view = super.getDropDownView(position,convertView,parent);
+                TextView textView = (TextView)view;
+                if (position == 0)
+                {
+                    textView.setTextColor(Color.GRAY);
+                }
+                else
+                    textView.setTextColor(Color.BLACK);
+                return view;
+            }
+
+        };
 
         primaryGenre.setAdapter(genreAdapter);
         primaryInstrument.setAdapter(instrumentAdapter);
@@ -223,6 +271,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     private Boolean formComplete(){
+        int age = 0;
         boolean valid=true;
         if(fName.getText().toString().trim().isEmpty()) {
             fName.setError("Can not be empty");
@@ -255,24 +304,67 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         if (genderSelector.getCheckedRadioButtonId() == -1) {
             valid = false;
         }
-        if (primaryInstrument.getSelectedItemPosition() == -1) {
+        if (primaryInstrument.getSelectedItemPosition() == -1 || primaryInstrument.getSelectedItemPosition() == 0) {
             valid = false;
+            Toast.makeText(getContext(),"Primary instrument is required",Toast.LENGTH_SHORT).show();
         }
-        // Secondary instrument is optional
+
+        if (primaryGenre.getSelectedItemPosition() == -1 || primaryGenre.getSelectedItemPosition() == 0){
+            valid = false;
+            Toast.makeText(getContext(),"Primary genre is required", Toast.LENGTH_SHORT).show();
+        }
+        if (birthday.getText().toString().isEmpty()){
+            valid = false;
+            birthday.setError("Birthday can not be empty");
+        }
+        else{
+            Calendar today = Calendar.getInstance();
+            Calendar dob = Calendar.getInstance();
+            String [] m_d_y = birthday.getText().toString().split("/");
+            int month = Integer.parseInt(m_d_y[0]);
+            int day = Integer.parseInt(m_d_y[1]);
+            int year = Integer.parseInt(m_d_y[2]);
+            dob.set(year,month,day);
+            age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+            if(today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))
+                age--;
+            if (age < MIN_AGE){
+                birthday.setError("Minimum age allowed is 13");
+                valid = false;
+            }
+
+        }
 
         return valid;
     }
 
     private User createUser(){
+        String [] instruments = getResources().getStringArray(R.array.instruments);
+        String [] genres = getResources().getStringArray(R.array.genres);
         RadioButton genderButton = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
         profileMap profileMap = new profileMap();
-        ArrayList<Integer> secondary = new ArrayList<>();
-        Integer pInstrument = profileMap.MapInstrument(primaryInstrument.getSelectedItem().toString().trim());
+        ArrayList<Integer> secondaryInstruments = new ArrayList<>();
+        ArrayList<Integer> secondaryGenres = new ArrayList<>();
+        int pGenre = profileMap.mapGenre(primaryGenre.getSelectedItem().toString().trim());
+
+        Integer pInstrument = profileMap.mapInstrument(primaryInstrument.getSelectedItem().toString().trim());
         Integer selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
-        secondary.add(-1); //TODO implement multiple choice picking for secondary instrument
-        return new User(fName.getText().toString().trim(),lName.getText().toString().trim(),
-                eMail.getText().toString().trim(),password.getText().toString().trim(),phoneNumber.getText().toString().trim(),selectedGender,
-                -1,secondary);
+        if(! secondaryInstrumentPrompt.getHint().equals(instruments[0])){
+            String [] selected = secondaryInstrumentPrompt.getHint().toString().split(" ");
+            for (int i = 0; i < selected.length;i++){
+                secondaryInstruments.add(profileMap.mapInstrument(selected[i]));
+            }
+        }
+        if(! secondaryGenrePrompt.getHint().equals(genres[0])){
+            String [] selected = secondaryGenrePrompt.getHint().toString().split(" ");
+            for (int i = 0; i < selected.length;i++){
+                secondaryGenres.add(profileMap.mapGenre(selected[i]));
+            }
+        }
+        return new User(etUsername.getText().toString().trim(),fName.getText().toString().trim(),
+                lName.getText().toString().trim(),eMail.getText().toString().trim(),
+                password.getText().toString().trim(),phoneNumber.getText().toString().trim(),
+                selectedGender,pInstrument,secondaryInstruments);
     }
 
     /*
