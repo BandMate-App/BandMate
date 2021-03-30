@@ -1,11 +1,14 @@
 package edu.fsu.cs.bandmate.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.KeyEvent;
+import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.Fragment;
@@ -48,7 +51,7 @@ import com.parse.SignUpCallback;
 import org.jetbrains.annotations.NotNull;
 
 
-public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener{
+public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
     public static final String KEY_PHONE="Phone",KEY_NAME="Name",KEY_USER="User",
             KEY_PRIMARY_INSTRUMENT="Primary Instrument",KEY_PRIMARY_GENRE="Primary Genre",
             KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",KEY_BIRTHDAY="Birthday",
@@ -66,8 +69,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     private ListView secondaryInstruments;
 
     private Spinner primaryInstrument, primaryGenre;
-
-    private Button signUp,cancel;
 
     private DatePickerDialog datePicker;
 
@@ -93,6 +94,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
 
+
         /*
          Edit Texts
          */
@@ -107,6 +109,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         secondaryInstrumentPrompt = rootView.findViewById(R.id.registerSecondaryInstruments);
         birthday = datePrompt;
 
+
+
         /*
          Spinner/RadioGroups
          */
@@ -118,8 +122,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         /*
          Buttons
          */
-        signUp = rootView.findViewById(R.id.registerSignUpButton);
-        cancel = rootView.findViewById(R.id.registerCancelButton);
+        Button signUp = rootView.findViewById(R.id.registerSignUpButton);
+        Button cancel = rootView.findViewById(R.id.registerCancelButton);
 
         /*
          Get string-arrays from resource and update views
@@ -155,10 +159,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         ArrayAdapter<String> genreAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,genres){
             @Override
             public boolean isEnabled(int position){
-                if(position == 0)
-                    return false;
-                else
-                    return true;
+                return position != 0;
             }
             @Override
             public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
@@ -244,7 +245,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         if (context instanceof RegisterFragmentListener) {
             listener = (RegisterFragmentListener) context;
@@ -321,7 +322,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             Calendar today = Calendar.getInstance();
             Calendar dob = Calendar.getInstance();
             String [] m_d_y = birthday.getText().toString().split("/");
-            int month = Integer.parseInt(m_d_y[0]);
+            int month = Integer.parseInt(m_d_y[0])+ 1;
             int day = Integer.parseInt(m_d_y[1]);
             int year = Integer.parseInt(m_d_y[2]);
             dob.set(year,month,day);
@@ -347,24 +348,24 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         ArrayList<Integer> secondaryGenres = new ArrayList<>();
         int pGenre = profileMap.mapGenre(primaryGenre.getSelectedItem().toString().trim());
 
-        Integer pInstrument = profileMap.mapInstrument(primaryInstrument.getSelectedItem().toString().trim());
-        Integer selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
+        int pInstrument = profileMap.mapInstrument(primaryInstrument.getSelectedItem().toString().trim());
+        int selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
         if(! secondaryInstrumentPrompt.getHint().equals(instruments[0])){
             String [] selected = secondaryInstrumentPrompt.getHint().toString().split(" ");
-            for (int i = 0; i < selected.length;i++){
-                secondaryInstruments.add(profileMap.mapInstrument(selected[i]));
+            for (String s : selected) {
+                secondaryInstruments.add(profileMap.mapInstrument(s));
             }
         }
         if(! secondaryGenrePrompt.getHint().equals(genres[0])){
             String [] selected = secondaryGenrePrompt.getHint().toString().split(" ");
-            for (int i = 0; i < selected.length;i++){
-                secondaryGenres.add(profileMap.mapGenre(selected[i]));
+            for (String s : selected) {
+                secondaryGenres.add(profileMap.mapGenre(s));
             }
         }
         return new User(etUsername.getText().toString().trim(),fName.getText().toString().trim(),
                 lName.getText().toString().trim(),eMail.getText().toString().trim(),
                 password.getText().toString().trim(),phoneNumber.getText().toString().trim(),
-                selectedGender,pInstrument,secondaryInstruments);
+                selectedGender,pInstrument,secondaryInstruments,secondaryGenres);
     }
 
     /*
@@ -393,13 +394,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String secondary = secondaryInstrumentPrompt.getHint().toString();
         String[] secondaryItems = secondary.split(" ");
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < secondaryItems.length;i++){
-            if(!selected.equals(secondaryItems[i])){
-                stringBuilder.append(secondaryItems[i]);
+        for (String secondaryItem : secondaryItems) {
+            if (!selected.equals(secondaryItem)) {
+                stringBuilder.append(secondaryItem);
                 stringBuilder.append(" ");
-            }
-            else{
-                Toast.makeText(getContext(),"Cannot be both primary and secondary \nRemoved "+ selected+" from secondary genres",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Cannot be both primary and secondary \nRemoved " + selected + " from secondary genres", Toast.LENGTH_SHORT).show();
 
             }
         }
@@ -419,13 +419,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String secondary = secondaryGenrePrompt.getHint().toString();
         String[] secondaryItems = secondary.split(" ");
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < secondaryItems.length;i++){
-            if(!selected.equals(secondaryItems[i])){
-                stringBuilder.append(secondaryItems[i]);
+        for (String secondaryItem : secondaryItems) {
+            if (!selected.equals(secondaryItem)) {
+                stringBuilder.append(secondaryItem);
                 stringBuilder.append(" ");
-            }
-            else{
-                Toast.makeText(getContext(),"Cannot be both primary and secondary \nRemoved "+ selected+" from secondary genres",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Cannot be both primary and secondary \nRemoved " + selected + " from secondary genres", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -449,13 +448,14 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
      */
     final Calendar calendar = Calendar.getInstance();
     int day = calendar.get(Calendar.DAY_OF_MONTH);
-    int month = calendar.get(Calendar.MONTH);
+    int month = calendar.get(Calendar.MONTH) + 1;
     int year = calendar.get(Calendar.YEAR);
     datePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // TODO fix this warning
-            datePrompt.setText(day + "/" + (month +1) + "/" +year);
+            String date = ""+ month + "/" + day + "/" + year;
+            datePrompt.setText(date);
         }
     },year,month,day);
 
@@ -679,6 +679,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     private void onCancel(){
         listener.onCancel();
     }
+
+    public static void hideKeyboard(Context context, View view){
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+    }
+
 
 
 }
