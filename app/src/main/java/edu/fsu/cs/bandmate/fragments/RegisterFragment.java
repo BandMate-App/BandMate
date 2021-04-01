@@ -151,6 +151,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
          */
         secondaryInstrumentPrompt.setShowSoftInputOnFocus(false);
         secondaryGenrePrompt.setShowSoftInputOnFocus(false);
+        datePrompt.setShowSoftInputOnFocus(false);
 
 
         /*
@@ -175,6 +176,32 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             }
 
         };
+
+         /*
+         Instrument Spinner adapter, sets the first element to be not selectable and it's text to gray
+         */
+        ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments){
+
+            @Override
+            public boolean isEnabled(int position){
+                return position != 0;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
+                View view = super.getDropDownView(position,convertView,parent);
+                TextView textView = (TextView)view;
+                if (position == 0)
+                {
+                    textView.setTextColor(Color.GRAY);
+                }
+                else
+                    textView.setTextColor(Color.BLACK);
+                return view;
+            }
+
+        };
+
+    
          /*
          Instrument Spinner adapter, sets the first element to be not selectable and it's text to gray
          */
@@ -300,6 +327,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         if (phoneNumber.getText().toString().trim().isEmpty()) {
             valid = false;
             phoneNumber.setError("Can not be empty");
+            //TODO check for valid phone number format
         }
 
         if (genderSelector.getCheckedRadioButtonId() == -1) {
@@ -307,7 +335,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         }
         if (primaryInstrument.getSelectedItemPosition() == -1 || primaryInstrument.getSelectedItemPosition() == 0) {
             valid = false;
-            Toast.makeText(getContext(),"Primary instrument is required",Toast.LENGTH_SHORT).show();
         }
 
         if (primaryGenre.getSelectedItemPosition() == -1 || primaryGenre.getSelectedItemPosition() == 0){
@@ -404,7 +431,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             }
         }
         if(stringBuilder.toString().equals(""))
-            secondaryInstrumentPrompt.setHint("Enter any other instruments you like to play"); //TODO replace with R.string.message
+            secondaryInstrumentPrompt.setHint(getResources().getString(R.string.secondaryInstrumentPrompt));
         else
             secondaryInstrumentPrompt.setHint(stringBuilder.toString());
     }
@@ -429,7 +456,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
         }
         if(stringBuilder.toString().equals(""))
-            secondaryGenrePrompt.setHint("Enter any other genres you like to play"); //TODO replace with R.string.message
+            secondaryGenrePrompt.setHint(getResources().getString(R.string.secondaryGenrePrompt)); //TODO replace with R.string.message
         else
             secondaryGenrePrompt.setHint(stringBuilder.toString());
     }
@@ -491,6 +518,25 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             user.setPassword(registerPassword);
             user.put(KEY_NAME,registerName);
             user.put(KEY_PHONE, registerPhone);
+            user.put(Profile.KEY_PRIMARYINSTRUMENT,primaryInstrument.getSelectedItem().toString().trim());
+            user.put(Profile.KEY_PRIMARYGENRE,primaryGenre.getSelectedItem().toString().trim());
+            user.put(Profile.KEY_BIRTHDAY,datePrompt.getText().toString().trim());
+
+            Button gender = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
+            user.put(Profile.KEY_GENDER,gender.getText().toString().trim());
+
+            if(!secondaryInstrumentPrompt.getHint().equals(getResources().getString(R.string.secondaryInstrumentPrompt))) {
+                String[] instruments = secondaryInstrumentPrompt.getHint().toString().split(" ");
+                List<String> i = Arrays.asList(instruments);
+                List<String> newList = new ArrayList<String>(i);
+                user.put(Profile.KEY_SECONDARYINSTRUMENTS,newList);
+            }
+
+            if(!secondaryGenrePrompt.getHint().equals(getResources().getString(R.string.secondaryGenrePrompt)))
+                user.put(Profile.KEY_SECONDARYGENRE,Arrays.asList(secondaryGenrePrompt.getHint().toString().split(" ")));
+
+
+
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
