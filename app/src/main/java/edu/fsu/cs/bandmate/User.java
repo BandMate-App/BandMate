@@ -29,6 +29,7 @@ Default Constructor sets all variables to invalid values
     private int gender;
     private int primaryInstrument;
     private ArrayList<Integer> secondaryInstruments;
+    private ArrayList<Integer> secondaryGenres;
 
 /*
  Parsing Constants
@@ -46,8 +47,9 @@ Default Constructor sets all variables to invalid values
 /*
  Parameterized Constructor
  */
-    public User(String fName, String lName, String eMail, String phoneNumber, String password,
-                int gender, int primaryInstrument, ArrayList<Integer> secondaryInstruments){
+    public User(String uName, String fName, String lName, String eMail, String phoneNumber, String password,
+                int gender, int primaryInstrument, ArrayList<Integer> secondaryInstruments,ArrayList<Integer> secondaryGenres){
+        this.uName = uName;
         this.fName = fName;
         this.lName = lName;
         this.eMail = eMail;
@@ -56,6 +58,7 @@ Default Constructor sets all variables to invalid values
         this.gender = gender;
         this.primaryInstrument = primaryInstrument;
         this.secondaryInstruments = secondaryInstruments;
+        this.secondaryGenres = secondaryGenres;
     }
 
 
