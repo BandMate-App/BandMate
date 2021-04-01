@@ -3,6 +3,7 @@ package edu.fsu.cs.bandmate.fragments;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.inputmethod.InputMethodManager;
@@ -23,6 +24,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -41,6 +43,8 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+
+import org.jetbrains.annotations.NotNull;
 
 /*
 TODO:
@@ -142,15 +146,59 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
          */
         secondaryInstrumentPrompt.setShowSoftInputOnFocus(false);
         secondaryGenrePrompt.setShowSoftInputOnFocus(false);
+        datePrompt.setShowSoftInputOnFocus(false);
 
 
         /*
-         TODO
-           In the adapter disable the first item in each spinner, set item 0 selected listener to do nothing,
-           set first item text to grey
+         Genre Spinner adapter, sets the first element to be not selectable and it's text to gray
          */
+        ArrayAdapter<String> genreAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,genres){
+            @Override
+            public boolean isEnabled(int position){
+                return position != 0;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
+                View view = super.getDropDownView(position,convertView,parent);
+                TextView textView = (TextView)view;
+                if (position == 0)
+                {
+                    textView.setTextColor(Color.GRAY);
+                }
+                else
+                    textView.setTextColor(Color.BLACK);
+                return view;
+            }
+
+        };
+
+         /*
+         Instrument Spinner adapter, sets the first element to be not selectable and it's text to gray
+         */
+        ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments){
+            @Override
+            public boolean isEnabled(int position){
+                return position != 0;
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
+                View view = super.getDropDownView(position,convertView,parent);
+                TextView textView = (TextView)view;
+                if (position == 0)
+                {
+                    textView.setTextColor(Color.GRAY);
+                }
+                else
+                    textView.setTextColor(Color.BLACK);
+                return view;
+            }
+
+        };
+
+        /*
         ArrayAdapter<String> genreAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,genres);
         ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments);
+         */
 
         primaryGenre.setAdapter(genreAdapter);
         primaryInstrument.setAdapter(instrumentAdapter);
@@ -250,12 +298,16 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         if (phoneNumber.getText().toString().trim().isEmpty()) {
             valid = false;
             phoneNumber.setError("Can not be empty");
+            //TODO check for valid phone number format
         }
 
         if (genderSelector.getCheckedRadioButtonId() == -1) {
             valid = false;
         }
-        if (primaryInstrument.getSelectedItemPosition() == -1) {
+        if (primaryInstrument.getSelectedItemPosition() == -1 || primaryInstrument.getSelectedItemPosition() == 0) {
+            valid = false;
+        }
+        if (primaryGenre.getSelectedItemPosition() == -1 || primaryGenre.getSelectedItemPosition() == 0) {
             valid = false;
         }
         // Secondary instrument is optional
@@ -268,7 +320,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         profileMap profileMap = new profileMap();
         ArrayList<Integer> secondary = new ArrayList<>();
         Integer pInstrument = profileMap.MapInstrument(primaryInstrument.getSelectedItem().toString().trim());
-        Integer selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
+        int selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
         secondary.add(-1); //TODO implement multiple choice picking for secondary instrument
         return new User(fName.getText().toString().trim(),lName.getText().toString().trim(),
                 eMail.getText().toString().trim(),password.getText().toString().trim(),phoneNumber.getText().toString().trim(),selectedGender,
@@ -301,18 +353,17 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String secondary = secondaryInstrumentPrompt.getHint().toString();
         String[] secondaryItems = secondary.split(" ");
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < secondaryItems.length;i++){
-            if(!selected.equals(secondaryItems[i])){
-                stringBuilder.append(secondaryItems[i]);
+        for (String secondaryItem : secondaryItems) {
+            if (!selected.equals(secondaryItem)) {
+                stringBuilder.append(secondaryItem);
                 stringBuilder.append(" ");
-            }
-            else{
-                Toast.makeText(getContext(),"Cannot be both primary and secondary \nRemoved "+ selected+" from secondary genres",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Cannot be both primary and secondary \nRemoved " + selected + " from secondary genres", Toast.LENGTH_SHORT).show();
 
             }
         }
         if(stringBuilder.toString().equals(""))
-            secondaryInstrumentPrompt.setHint("Enter any other instruments you like to play"); //TODO replace with R.string.message
+            secondaryInstrumentPrompt.setHint(getResources().getString(R.string.secondaryInstrumentPrompt));
         else
             secondaryInstrumentPrompt.setHint(stringBuilder.toString());
     }
@@ -327,18 +378,17 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String secondary = secondaryGenrePrompt.getHint().toString();
         String[] secondaryItems = secondary.split(" ");
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < secondaryItems.length;i++){
-            if(!selected.equals(secondaryItems[i])){
-                stringBuilder.append(secondaryItems[i]);
+        for (String secondaryItem : secondaryItems) {
+            if (!selected.equals(secondaryItem)) {
+                stringBuilder.append(secondaryItem);
                 stringBuilder.append(" ");
-            }
-            else{
-                Toast.makeText(getContext(),"Cannot be both primary and secondary \nRemoved "+ selected+" from secondary genres",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Cannot be both primary and secondary \nRemoved " + selected + " from secondary genres", Toast.LENGTH_SHORT).show();
             }
 
         }
         if(stringBuilder.toString().equals(""))
-            secondaryGenrePrompt.setHint("Enter any other genres you like to play"); //TODO replace with R.string.message
+            secondaryGenrePrompt.setHint(getResources().getString(R.string.secondaryGenrePrompt)); //TODO replace with R.string.message
         else
             secondaryGenrePrompt.setHint(stringBuilder.toString());
     }
@@ -399,6 +449,25 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             user.setPassword(registerPassword);
             user.put(KEY_NAME,registerName);
             user.put(KEY_PHONE, registerPhone);
+            user.put(Profile.KEY_PRIMARYINSTRUMENT,primaryInstrument.getSelectedItem().toString().trim());
+            user.put(Profile.KEY_PRIMARYGENRE,primaryGenre.getSelectedItem().toString().trim());
+            user.put(Profile.KEY_BIRTHDAY,datePrompt.getText().toString().trim());
+
+            Button gender = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
+            user.put(Profile.KEY_GENDER,gender.getText().toString().trim());
+
+            if(!secondaryInstrumentPrompt.getHint().equals(getResources().getString(R.string.secondaryInstrumentPrompt))) {
+                String[] instruments = secondaryInstrumentPrompt.getHint().toString().split(" ");
+                List<String> i = Arrays.asList(instruments);
+                List<String> newList = new ArrayList<String>(i);
+                user.put(Profile.KEY_SECONDARYINSTRUMENTS,newList);
+            }
+
+            if(!secondaryGenrePrompt.getHint().equals(getResources().getString(R.string.secondaryGenrePrompt)))
+                user.put(Profile.KEY_SECONDARYGENRE,Arrays.asList(secondaryGenrePrompt.getHint().toString().split(" ")));
+
+
+
             user.signUpInBackground(new SignUpCallback() {
                 @Override
                 public void done(ParseException e) {
