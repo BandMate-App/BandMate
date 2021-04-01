@@ -22,7 +22,6 @@
     <string name="secondaryInstrumentPrompt">Enter any other instruments you play?</string>
     <string name="secondaryGenrePrompt">Enter any other genres you like to play</string>
     <string name="sign_upPrompt">Sign Up</string>
-    <string name="usernamePrompt">Username</string>
     <string name="passwordPrompt">Password</string>
     <string name="loginPrompt">Login</string>
 

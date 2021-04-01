@@ -201,33 +201,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
         };
 
-    
-         /*
-         Instrument Spinner adapter, sets the first element to be not selectable and it's text to gray
-         */
-        ArrayAdapter<String> instrumentAdapter =new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,instruments){
-            @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                    return false;
-                else
-                    return true;
-            }
-            @Override
-            public View getDropDownView(int position, View convertView, @NotNull ViewGroup parent){
-                View view = super.getDropDownView(position,convertView,parent);
-                TextView textView = (TextView)view;
-                if (position == 0)
-                {
-                    textView.setTextColor(Color.GRAY);
-                }
-                else
-                    textView.setTextColor(Color.BLACK);
-                return view;
-            }
-
-        };
-
         primaryGenre.setAdapter(genreAdapter);
         primaryInstrument.setAdapter(instrumentAdapter);
 
