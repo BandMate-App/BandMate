@@ -3,7 +3,12 @@ package edu.fsu.cs.bandmate;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.util.Log;
@@ -22,15 +27,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener {
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
+    private AlertDialog dialog;
+    private Menu m_menu = null;
     public static final String TAG=MainActivity.class.getCanonicalName();
 
 
-    public void onMain(){
-        MainFragment fragment = new MainFragment();
-        String tag = MainFragment.class.getCanonicalName();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commitNow();
 
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +48,73 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         Log.i(TAG,"User already logged in, proceding to home screen");
         if(ParseUser.getCurrentUser()!=null){
-            //onValidLogin();
+            onValidLogin();
         }
 
     }
+
+    /*
+     Menu Functions
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.options,menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if(id == R.id.logout){
+            ParseUser.logOutInBackground();
+            onMain();
+        }
+        else if(id == R.id.quit){
+            //TODO confrim dialog
+            confirmQuit();
+            dialog.show();
+        }
+        return true;
+    }
+
+    public void confirmQuit(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Confirm Quit");
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                System.exit(0);
+            }
+        });
+        builder.setCancelable(true);
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // do nothing if cancel is clicked
+            }
+        });
+        dialog = builder.create();
+    }
+
+    // Set the logout item to be visible only if the current user != null
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        MenuItem logout = menu.findItem(R.id.logout);
+        logout.setVisible(ParseUser.getCurrentUser()!= null);
+        return true;
+    }
+
+    /*
+    End Menu Functions
+     */
+
+
+    /*
+     Fragment interface function implementations
+     */
 
     @Override
     public void onLogin() {
@@ -80,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         m_loggedIn = true;
         onFeed();
         getSupportFragmentManager().executePendingTransactions();
+        /*
+         Update the appropriate views to be visible to the user
+         */
         bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
@@ -88,10 +156,26 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         onMain();
     }
 
+    /*
+      End fragment interface function implementations
+     */
+
+
+    /*
+     Fragment Navigation
+     */
+
     public void onFeed(){
         FeedFragment fragment = new FeedFragment();
         String tag = FeedFragment.class.getCanonicalName();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
+    }
+
+    public void onMain(){
+        MainFragment fragment = new MainFragment();
+        String tag = MainFragment.class.getCanonicalName();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commitNow();
+
     }
 
     public void onOpenMessages(){
@@ -105,6 +189,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
         String tag = ProfileFragment.class.getCanonicalName();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
     }
+
+    /*
+     End Fragment Navigation
+     */
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

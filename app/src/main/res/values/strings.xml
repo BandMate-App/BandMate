@@ -6,6 +6,8 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="quit">Quit</string>
+    <string name="logout">Logout</string>
     <string name="usernamePrompt">Username</string>
     <string name="first_namePrompt">First Name</string>
     <string name="last_namePrompt">Last Name</string>
@@ -17,9 +19,13 @@
     <string name="malePrompt">Male</string>
     <string name="femalePrompt">Female</string>
     <string name="otherPrompt">Other</string>
-    <string name="secondaryInstrumentsPrompt">Enter any other instruments you play?</string>
-    <string name="secondaryGenresPrompt">Enter any other genres you like to play</string>
+    <string name="secondaryInstrumentPrompt">Enter any other instruments you play?</string>
+    <string name="secondaryGenrePrompt">Enter any other genres you like to play</string>
     <string name="sign_upPrompt">Sign Up</string>
+    <string name="usernamePrompt">Username</string>
+    <string name="passwordPrompt">Password</string>
+    <string name="loginPrompt">Login</string>
+
     <string name="cancelPrompt">Cancel</string>
 
     <string-array name="instruments">

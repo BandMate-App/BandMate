@@ -38,7 +38,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Username">
+                    android:text="@string/usernamePrompt">
 
                 </TextView>
 
@@ -47,7 +47,11 @@
                     android:layout_weight="1"
                     android:id="@+id/onLoginUsername"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:autofillHints="false"
+                    >
 
                 </EditText>
 
@@ -66,7 +70,7 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Password">
+                    android:text="@string/passwordPrompt">
 
                 </TextView>
 
@@ -75,7 +79,10 @@
                     android:layout_weight="1"
                     android:id="@+id/onLoginPassword"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionDone"
+                    android:autofillHints="false" >
 
                 </EditText>
 
@@ -85,6 +92,8 @@
 
     </ScrollView>
 
+
+    <!-- Inner linear layout for buttons -->
     <LinearLayout
         android:gravity="bottom|center"
         android:orientation="horizontal"
@@ -99,7 +108,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Login">
+            android:text="@string/loginPrompt">
 
         </Button>
 
@@ -110,7 +119,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel">
+            android:text="@string/cancelPrompt">
 
         </Button>
 
