@@ -26,10 +26,11 @@
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:hint="Username"
+            android:hint="@string/username"
             android:ems="10"
             android:inputType="textPersonName"
-            >
+            android:imeOptions = "actionDone"
+            android:autofillHints="false">
         </EditText>
 
 
@@ -49,7 +50,10 @@
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:hint="First Name">
+            android:hint="@string/first_namePrompt"
+            android:imeOptions = "actionDone"
+            android:inputType="textPersonName"
+            android:autofillHints="false">
 
         </EditText>
 
@@ -60,7 +64,10 @@
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:hint="Last Name">
+            android:hint="@string/last_namePrompt"
+            android:imeOptions = "actionDone"
+            android:inputType="textPersonName"
+            android:autofillHints="false">
 
         </EditText>
 
@@ -71,8 +78,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Email"
-            android:textAlignment="center">
+            android:hint="@string/emailPrompt"
+            android:textAlignment="center"
+            android:imeOptions = "actionDone"
+            android:inputType="textEmailAddress"
+            android:autofillHints="false">
 
         </EditText>
 
@@ -81,9 +91,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Phone Number"
+            android:hint="@string/phone_numberPrompt"
             android:inputType="phone"
-            android:textAlignment="center">
+            android:textAlignment="center"
+            android:imeOptions = "actionDone"
+            android:autofillHints="false">
 
         </EditText>
 
@@ -93,9 +105,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Enter Password"
+            android:hint="@string/enter_passwordPrompt"
             android:inputType="textPassword"
-            android:textAlignment="center">
+            android:textAlignment="center"
+            android:imeOptions = "actionDone"
+            android:autofillHints="false">
 
         </EditText>
 
@@ -104,19 +118,24 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Confirm Password"
+            android:hint="@string/confirm_passwordPrompt"
             android:inputType="textPassword"
-            android:textAlignment="center">
+            android:textAlignment="center"
+            android:imeOptions = "actionDone"
+            android:autofillHints="false">
 
         </EditText>
 
         <EditText
             android:id="@+id/datePickerPrompt"
-            android:hint="Enter Birthday"
+            android:hint="@string/enter_birthdayPrompt"
+            android:inputType="date"
             android:textAlignment="center"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="0dp"
+            android:imeOptions = "actionDone"
+            android:autofillHints="false">
         </EditText>
 
 
@@ -135,7 +154,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="Male"
+                android:text="@string/malePrompt"
                 android:textAlignment="center">
 
             </RadioButton>
@@ -145,7 +164,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Female"
+                android:text="@string/femalePrompt"
                 android:textAlignment="center">
 
             </RadioButton>
@@ -155,7 +174,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="Other"
+                android:text="@string/otherPrompt"
                 android:textAlignment="center">
 
             </RadioButton>
@@ -189,8 +208,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Enter any other instruments you play?"
-            android:textAlignment="center">
+            android:hint="@string/secondaryInstrumentPrompt"
+            android:textAlignment="center"
+            android:imeOptions = "actionDone"
+            android:inputType="text"
+            android:autofillHints="false"
+            >
 
         </EditText>
 
@@ -199,134 +222,38 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Enter any other genres you like to play"
-            android:textAlignment="center">
+            android:hint="@string/secondaryGenrePrompt"
+            android:textAlignment="center"
+            android:imeOptions = "actionDone"
+            android:inputType="text"
+            android:autofillHints="false">
         </EditText>
 
-        <!--
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some genre">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some genre">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some genre">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some genre">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some genre">
-
-            </CheckBox>
-        </LinearLayout>
-
-
-         This needs to contain a group of checkboxes, user picks up to 3 secondary instruments
-
-        <LinearLayout
-            android:id="@+id/registerInstrumentPreference"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some instrument">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some instrument">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some instrument">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some instrument">
-
-            </CheckBox>
-
-            <CheckBox
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="some instrument">
-
-            </CheckBox>
-
-        </LinearLayout>
-        -->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
+            <!--style="?android:attr/buttonBarPositiveButtonStyle"-->
             <Button
+
                 android:layout_margin="1dp"
                 android:id="@+id/registerSignUpButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Sign Up">
+                android:text="@string/sign_upPrompt">
 
             </Button>
-
+            <!--style="?android:attr/buttonBarPositiveButtonStyle"-->
             <Button
                 android:layout_margin="1dp"
                 android:id="@+id/registerCancelButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Cancel">
+                android:text="@string/cancelPrompt">
 
             </Button>
         </LinearLayout>
