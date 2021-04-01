@@ -91,6 +91,8 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(getActivity(), "Error creating profile", Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(getActivity(), "Profile successfully created", Toast.LENGTH_SHORT).show();
+                        user.put("myProfile",prof);
+                        user.saveEventually();
                     }
                 }
             });
