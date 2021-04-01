@@ -8,7 +8,7 @@
     <string name="title_notifications">Notifications</string>
     <string name="quit">Quit</string>
     <string name="logout">Logout</string>
-    <string name="username">Username</string>
+    <string name="usernamePrompt">Username</string>
     <string name="first_namePrompt">First Name</string>
     <string name="last_namePrompt">Last Name</string>
     <string name="emailPrompt">Email</string>
@@ -25,6 +25,7 @@
     <string name="usernamePrompt">Username</string>
     <string name="passwordPrompt">Password</string>
     <string name="loginPrompt">Login</string>
+
     <string name="cancelPrompt">Cancel</string>
 
     <string-array name="instruments">

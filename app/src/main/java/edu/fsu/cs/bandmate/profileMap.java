@@ -12,8 +12,11 @@ public class profileMap {
             ;
     private String[] instruments = {"guitar","piano","ukulele","drums","vocals"};
 
+    private String[] genres = {"rock","jazz","pop","metal","classical","folk","alternative","electronic"};
 
-    public int MapInstrument(String instrument){
+
+
+    public int mapInstrument(String instrument){
         for(int i = 0; i <instruments.length;i++) {
             if (instruments[i].toLowerCase().trim().equals(instrument.toLowerCase().trim()))
                 return i;
@@ -47,6 +50,22 @@ public class profileMap {
         if(i>=genders.length)
             return "invalid choice";
         return genders[i];
+    }
+
+
+    public int mapGenre(String genre){
+        for(int i = 0; i <genres.length;i++) {
+            if (genres[i].toLowerCase().trim().equals(genre.toLowerCase().trim()))
+                return i;
+        }
+        // return -1 if not in list of genres
+        return -1;
+    }
+
+    public String getGenreType(int i){
+        if(i>=genres.length)
+            return "invalid choice";
+        return genres[i];
     }
 
 }
