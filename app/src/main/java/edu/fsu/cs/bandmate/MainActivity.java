@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
 
         if(id == R.id.logout){
             ParseUser.logOutInBackground();
+            bottomNavigationView.setVisibility(View.GONE);
             onMain();
         }
         else if(id == R.id.quit){
