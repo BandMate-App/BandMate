@@ -9,7 +9,8 @@
         android:id="@+id/tvBody"
         android:layout_toStartOf="@id/ivProfileMe"
         android:text="PLACEHOLDER OUTGOING MESSAGE"
-        android:background="@drawable/message_outgoing">
+        android:background="@drawable/message_outgoing"
+        >
 
     </TextView>
 

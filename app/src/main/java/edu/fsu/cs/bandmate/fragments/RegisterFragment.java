@@ -454,7 +454,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // TODO fix this warning
-            String date = ""+ month + "/" + day + "/" + year;
+            String date = ""+ (month+1) + "/" + day + "/" + year;
             datePrompt.setText(date);
         }
     },year,month,day);
@@ -683,6 +683,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                         selectedInstruments.append(" ");
                     }
                 // Set the hint to the selected choices
+                // Checks that the value is not empty
+                if(selectedInstruments.toString().equals(""))
+                    selectedInstruments.append(getResources().getString(R.string.secondaryInstrumentPrompt));
                 secondaryInstrumentPrompt.setHint(selectedInstruments.toString());
             }
         });
