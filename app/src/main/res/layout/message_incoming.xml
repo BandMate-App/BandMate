@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvName"
+        android:text="PLACEHOLDER NAME"
+        android:layout_toEndOf="@id/ivProfileOther"
+        android:layout_alignTop="@id/ivProfileOther"
+        >
+    </TextView>
+
+    <ImageView
+        android:id="@+id/ivProfileOther"
+        android:layout_alignParentStart="true"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="Other Profile PLACEHOLDER"
+        >
+    </ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvBody"
+        android:layout_below="@+id/tvName"
+        android:text="some message PLACEHOLDER"
+        android:layout_alignStart="@id/tvName"
+        android:background="@drawable/message_incoming"
+        android:textColor="@color/white"
+        >
+    </TextView>
+
+</RelativeLayout>

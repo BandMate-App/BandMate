@@ -32,6 +32,9 @@ dependencies {
     //PARSE SDK DEPENDENCY
     implementation "com.github.parse-community.Parse-SDK-Android:parse:1.26.0"
 
+    //RecyclerView Dependency
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
     //BOTTOM NAVIGATION VIEW DEPENDENCIES
     implementation "androidx.appcompat:appcompat:${appCompatVersion}"
     implementation "com.google.android.material:material:${designSupportVersion}"
