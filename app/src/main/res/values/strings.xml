@@ -26,6 +26,8 @@
     <string name="loginPrompt">Login</string>
 
     <string name="cancelPrompt">Cancel</string>
+    <string name="message_hint">Send a message</string>
+    <string name="send">send</string>
 
     <string-array name="instruments">
         <item name="select">Primary Instrument</item>
