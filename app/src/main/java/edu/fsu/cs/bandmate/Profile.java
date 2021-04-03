@@ -7,6 +7,8 @@ import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
+import java.util.Objects;
+
 
 @ParseClassName("Profile")
 public class Profile extends ParseObject {
@@ -31,10 +33,11 @@ public class Profile extends ParseObject {
     }
 
     public String getName(){
-        return (String) getParseUser(KEY_USER).get(KEY_NAME);
+        return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_NAME);
     }
 
     public String getGenre(){return getString(KEY_GENRE);}
+    public String getBirthday(){return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_BIRTHDAY);}
 
     public void putUser(ParseUser user){
         this.put(KEY_USER,user);

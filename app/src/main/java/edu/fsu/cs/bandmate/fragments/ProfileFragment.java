@@ -4,8 +4,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -17,7 +23,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import edu.fsu.cs.bandmate.R;
+import edu.fsu.cs.bandmate.User;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +41,9 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     public ParseUser user;
+    TextView profileUserName;
+    TextView profileFirstName;
+    TextView profileBirthday;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -97,5 +109,28 @@ public class ProfileFragment extends Fragment {
                 }
             });
         }
+        profileUserName = view.findViewById(R.id.profileUsernameValue);
+        profileFirstName = view.findViewById(R.id.profileFirstNameValue);
+        profileBirthday = view.findViewById(R.id.profileBirthdayValue);
+        try {
+            queryProfile();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+    private void queryProfile() throws ParseException {
+        ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
+        query.include(Profile.KEY_USER);
+        query.whereEqualTo(Profile.KEY_USER, user);
+        List<Profile> userProfile = query.find();
+
+        if (userProfile.size() != 1)
+            Toast.makeText(getActivity(), "error getting profile", Toast.LENGTH_SHORT).show();
+
+        String username = userProfile.get(0).getName();
+        String birthday = userProfile.get(0).getBirthday();
+        //String firstName = userProfile.get(0).get
+        profileFirstName.setText(username);
+        profileBirthday.setText(birthday);
     }
 }
