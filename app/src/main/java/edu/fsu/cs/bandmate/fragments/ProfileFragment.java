@@ -1,15 +1,20 @@
 package edu.fsu.cs.bandmate.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -23,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.fsu.cs.bandmate.R;
@@ -44,6 +50,11 @@ public class ProfileFragment extends Fragment {
     TextView profileUserName;
     TextView profileFirstName;
     TextView profileBirthday;
+    TextView profileGenre;
+    TextView profilePrimaryInstrument;
+    TextView profileSecondaryInstrument;
+    TextView profileGender;
+    ImageView profileImage;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -112,6 +123,12 @@ public class ProfileFragment extends Fragment {
         profileUserName = view.findViewById(R.id.profileUsernameValue);
         profileFirstName = view.findViewById(R.id.profileFirstNameValue);
         profileBirthday = view.findViewById(R.id.profileBirthdayValue);
+        profileGenre = view.findViewById(R.id.profileGenreValue);
+        profilePrimaryInstrument = view.findViewById(R.id.profilePrimaryInstrumentValue);
+        profileSecondaryInstrument = view.findViewById(R.id.profileSecondaryInstrymentValue);
+        profileGender = view.findViewById(R.id.profileGenderValue);
+        profileImage = view.findViewById(R.id.profileImageValue);
+
         try {
             queryProfile();
         } catch (ParseException e) {
@@ -127,10 +144,38 @@ public class ProfileFragment extends Fragment {
         if (userProfile.size() != 1)
             Toast.makeText(getActivity(), "error getting profile", Toast.LENGTH_SHORT).show();
 
-        String username = userProfile.get(0).getName();
+        StringBuilder sb = new StringBuilder();
+        String username = user.getUsername();
+        String name = userProfile.get(0).getName();
         String birthday = userProfile.get(0).getBirthday();
-        //String firstName = userProfile.get(0).get
-        profileFirstName.setText(username);
+        String genre = userProfile.get(0).getGenre();
+        String primaryInstrument = userProfile.get(0).getPrimaryInstrument();
+        ArrayList<String> secondaryInstrumentsList = userProfile.get(0).getSecondaryInstruments();
+        for (String element: secondaryInstrumentsList) {
+            sb.append(element).append('\n');
+        }
+        String secondaryInstruments = sb.toString();
+        String gender = userProfile.get(0).getGender();
+
+        userProfile.get(0).getImage().getDataInBackground(new GetDataCallback() {
+            @Override
+            public void done(byte[] data, ParseException e) {
+                if (e == null) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(data, 0,data.length);
+                    profileImage.setImageBitmap(bmp);
+                } else {
+                    Toast.makeText(getActivity(), "error getting profile image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        profileUserName.setText(username);
+        profileFirstName.setText(name);
         profileBirthday.setText(birthday);
+        profileGenre.setText(genre);
+        profilePrimaryInstrument.setText(primaryInstrument);
+        profileSecondaryInstrument.setText(secondaryInstruments);
+        profileGender.setText(gender);
+
     }
 }

@@ -26,12 +26,13 @@
     <string name="loginPrompt">Login</string>
 
     <string name="profileUsername">Username</string>
-    <string name="profileFirstName">First Name</string>
+    <string name="profileFirstName">Name</string>
     <string name="profileLastName">Last Name</string>
     <string name="profileGender">Gender</string>
     <string name="profileBirthday">Birthday</string>
     <string name="profileInstrumentPrimary">Primary Instrument</string>
     <string name="profileInstrumentSecondary">Secondary Instrument</string>
+    <string name="profileGenre">Genre</string>
 
     <string name="cancelPrompt">Cancel</string>
     <string name="message_hint">Send a message</string>
