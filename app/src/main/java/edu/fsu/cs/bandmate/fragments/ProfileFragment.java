@@ -3,6 +3,9 @@ package edu.fsu.cs.bandmate.fragments;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -40,6 +43,8 @@ import edu.fsu.cs.bandmate.User;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
+
+    ProfileFragmentInterface profileFragmentInterface;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -101,25 +106,13 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //If the user doesn't have a profile, create a profile for them and upload it
-        user = ParseUser.getCurrentUser();
-        if(user.getParseObject("myProfile")==null){
-            Profile prof = new Profile();
-            prof.putUser(user);
-            prof.putName(user.getString("Name"));
-            prof.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e!=null){
-                        Toast.makeText(getActivity(), "Error creating profile", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(getActivity(), "Profile successfully created", Toast.LENGTH_SHORT).show();
-                        user.put("myProfile",prof);
-                        user.saveEventually();
-                    }
-                }
-            });
-        }
+        view.findViewById(R.id.buttonEdit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profileFragmentInterface.openEditProfileFragment();
+            }
+        });
+        createUserProfileIfNeeded();
         profileUserName = view.findViewById(R.id.profileUsernameValue);
         profileFirstName = view.findViewById(R.id.profileFirstNameValue);
         profileBirthday = view.findViewById(R.id.profileBirthdayValue);
@@ -134,7 +127,59 @@ public class ProfileFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+
+
+
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ProfileFragmentInterface) {
+            profileFragmentInterface = (ProfileFragmentInterface) context;
+        }else{
+            throw new RuntimeException("Must implement ProfileFragmentInterface");
+        }
+    }
+
+    public void createUserProfileIfNeeded(){
+        user = ParseUser.getCurrentUser();
+        if(user.getParseObject("myProfile")==null){
+            Profile prof = new Profile();
+            prof.putUser(user);
+            prof.putName(user.getString("Name"));
+            prof.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e!=null){
+                        Toast.makeText(getActivity(), "Error creating profile", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity(), "Profile successfully created", Toast.LENGTH_SHORT).show();
+                        user.put("myProfile",prof);
+                        user.saveInBackground();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Welcome to Band Mate!");
+                        builder.setMessage("It looks like you haven't set up your profile yet, would you like to do that now?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                profileFragmentInterface.openEditProfileFragment();
+                            }
+                        });
+                        builder.setNegativeButton("Maybe Later", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.create().show();
+                    }
+                }
+            });
+        }
+    }//End of createUserProfileIfNeeded
+
     private void queryProfile() throws ParseException {
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         query.include(Profile.KEY_USER);
@@ -178,4 +223,11 @@ public class ProfileFragment extends Fragment {
         profileGender.setText(gender);
 
     }
-}
+
+    public interface ProfileFragmentInterface{
+        public void openEditProfileFragment();
+    }
+
+
+}//end Profile Fragment class
+

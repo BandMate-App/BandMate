@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.fsu.cs.bandmate.fragments.EditProfileFragment;
 import edu.fsu.cs.bandmate.fragments.FeedFragment;
 import edu.fsu.cs.bandmate.fragments.LoginFragment;
 import edu.fsu.cs.bandmate.fragments.MainFragment;
@@ -23,8 +24,13 @@ import edu.fsu.cs.bandmate.fragments.ProfileFragment;
 import edu.fsu.cs.bandmate.fragments.RegisterFragment;
 import com.parse.ParseUser;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
-        LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        MainFragment.mainFragmentListener,
+        LoginFragment.LoginFragmentListener,
+        RegisterFragment.RegisterFragmentListener,
+        BottomNavigationView.OnNavigationItemSelectedListener,
+        ProfileFragment.ProfileFragmentInterface,
+        EditProfileFragment.EditProfileFragmentInterface {
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
     private AlertDialog dialog;
@@ -211,5 +217,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
             return true;
         }
     return false;
+    }
+
+    @Override
+    public void openEditProfileFragment() {
+        EditProfileFragment editProfileFragment = new EditProfileFragment();
+        //String tag = EditProfileFragment.class.getCanonicalName();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,editProfileFragment).commit();
+    }
+
+    @Override
+    public void ExitEditProfileFragment() {
+        bottomNavigationView.setSelectedItemId(R.id.itProfile);
     }
 }

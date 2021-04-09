@@ -35,6 +35,11 @@
     <string name="profileGenre">Genre</string>
 
     <string name="cancelPrompt">Cancel</string>
+    <string name="name">Name</string>
+    <string name="primary_genre">Primary Genre</string>
+    <string name="secondary_genre">Secondary Genre</string>
+    <string name="primary_instrument">Primary Instrument</string>
+    <string name="secondary_instrument">Secondary Instrument</string>
     <string name="message_hint">Send a message</string>
     <string name="send">send</string>
 
@@ -44,7 +49,7 @@
         <item name="piano">Piano</item>
         <item name="ukulele">Ukulele</item>
         <item name="drums">Drums</item>
-        <item name ="vocals">Vocals</item>
+        <item name="vocals">Vocals</item>
         <item name="producer">Producer</item>
     </string-array>
 
