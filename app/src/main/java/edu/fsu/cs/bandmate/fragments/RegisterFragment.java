@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.MainActivity;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
@@ -45,6 +46,7 @@ import edu.fsu.cs.bandmate.profileMap;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -485,7 +487,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
+            ParseObject messagesList = new ParseObject("ConversationList");
             ParseUser user = new ParseUser();
+            messagesList.put(ConversationList.KEY_USER,user);
             user.setUsername(registerUsername);
             user.setEmail(registerEmail);
             user.setPassword(registerPassword);
@@ -494,6 +498,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             user.put(Profile.KEY_PRIMARYINSTRUMENT,primaryInstrument.getSelectedItem().toString().trim());
             user.put(Profile.KEY_PRIMARYGENRE,primaryGenre.getSelectedItem().toString().trim());
             user.put(Profile.KEY_BIRTHDAY,datePrompt.getText().toString().trim());
+            user.put(Profile.KEY_CONVERSATIONS,messagesList);
 
             Button gender = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
             user.put(Profile.KEY_GENDER,gender.getText().toString().trim());

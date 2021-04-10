@@ -35,7 +35,7 @@
         <item name="piano">Piano</item>
         <item name="ukulele">Ukulele</item>
         <item name="drums">Drums</item>
-        <item name ="vocals">Vocals</item>
+        <item name="vocals">Vocals</item>
         <item name="producer">Producer</item>
     </string-array>
 

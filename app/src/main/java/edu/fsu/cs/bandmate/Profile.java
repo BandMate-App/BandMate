@@ -20,6 +20,8 @@ public class Profile extends ParseObject {
     public static final String KEY_SECONDARYGENRE = "secondary_genre";
     public static final String KEY_BIRTHDAY = "birthday";
     public static final String KEY_GENDER = "gender";
+    public static final String KEY_CONVERSATIONS = "conversations";
+
 
 
     public ParseFile getImage(){
@@ -44,6 +46,11 @@ public class Profile extends ParseObject {
     }
     public void putGenre(String genre){
         this.put(KEY_GENRE,genre);
+    }
+
+    public ParseObject getConversations(){
+        return (ParseObject) ParseUser.getCurrentUser().get(Profile.KEY_CONVERSATIONS);
+
     }
 
 }
