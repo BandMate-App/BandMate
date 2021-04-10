@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -202,17 +203,9 @@ public class ProfileFragment extends Fragment {
         String secondaryInstruments = sb.toString();
         String gender = userProfile.get(0).getGender();
 
-        userProfile.get(0).getImage().getDataInBackground(new GetDataCallback() {
-            @Override
-            public void done(byte[] data, ParseException e) {
-                if (e == null) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(data, 0,data.length);
-                    profileImage.setImageBitmap(bmp);
-                } else {
-                    Toast.makeText(getActivity(), "error getting profile image", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Glide.with(getContext())
+                .load(userProfile.get(0).getImage().getUrl())
+                .into(profileImage);
 
         profileUserName.setText(username);
         profileFirstName.setText(name);
