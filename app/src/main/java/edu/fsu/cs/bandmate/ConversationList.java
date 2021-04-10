@@ -12,7 +12,15 @@ import java.util.Objects;
 
 @ParseClassName("ConversationList")
 public class ConversationList extends ParseObject {
+    public ConversationList(){}
 
     public static final String KEY_CONVERSATION = "conversation";
     public static final String KEY_USER = "userId";
+
+    public ArrayList<Conversation> getConversations() {
+        return (ArrayList<Conversation>) this.get(KEY_CONVERSATION);
+
+    }
 }
+
+

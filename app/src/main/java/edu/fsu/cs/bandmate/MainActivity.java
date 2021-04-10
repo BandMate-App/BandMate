@@ -21,6 +21,8 @@ import edu.fsu.cs.bandmate.fragments.MainFragment;
 import edu.fsu.cs.bandmate.fragments.MessagesFragment;
 import edu.fsu.cs.bandmate.fragments.ProfileFragment;
 import edu.fsu.cs.bandmate.fragments.RegisterFragment;
+
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
@@ -142,7 +144,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     }
 
     @Override
-    public void onRegisterComplete(User user) {
+    public void onRegisterComplete() {
+        //ParseObject messagesList = ParseObject.create("ConversationList");
+        //messagesList.put(ConversationList.KEY_USER,ParseUser.getCurrentUser());
+        //messagesList.saveInBackground();
+
         m_loggedIn = true;
         onFeed();
         getSupportFragmentManager().executePendingTransactions();

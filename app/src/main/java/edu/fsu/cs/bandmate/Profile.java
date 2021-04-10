@@ -54,9 +54,5 @@ public class Profile extends ParseObject {
         this.put(KEY_GENRE,genre);
     }
 
-    public ParseObject getConversations(){
-        return (ParseObject) ParseUser.getCurrentUser().get(Profile.KEY_CONVERSATIONS);
-
-    }
 
 }

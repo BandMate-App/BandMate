@@ -48,6 +48,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -95,6 +96,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
+
 
 
         /*
@@ -437,7 +439,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     public interface RegisterFragmentListener{
-        void onRegisterComplete(User user);
+        void onRegisterComplete();
         void onCancel();
     }
 
@@ -476,7 +478,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String registerUsername=etUsername.getText().toString();
         String registerPhone=phoneNumber.getText().toString();
 
-        //TODO: Set Up and Collect extra info (gender,instruments)
 
 
 
@@ -487,9 +488,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-            ParseObject messagesList = new ParseObject("ConversationList");
             ParseUser user = new ParseUser();
-            messagesList.put(ConversationList.KEY_USER,user);
             user.setUsername(registerUsername);
             user.setEmail(registerEmail);
             user.setPassword(registerPassword);
@@ -498,7 +497,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             user.put(Profile.KEY_PRIMARYINSTRUMENT,primaryInstrument.getSelectedItem().toString().trim());
             user.put(Profile.KEY_PRIMARYGENRE,primaryGenre.getSelectedItem().toString().trim());
             user.put(Profile.KEY_BIRTHDAY,datePrompt.getText().toString().trim());
-            user.put(Profile.KEY_CONVERSATIONS,messagesList);
 
             Button gender = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
             user.put(Profile.KEY_GENDER,gender.getText().toString().trim());
@@ -512,7 +510,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
             if(!secondaryGenrePrompt.getHint().equals(getResources().getString(R.string.secondaryGenrePrompt)))
                 user.put(Profile.KEY_SECONDARYGENRE,Arrays.asList(secondaryGenrePrompt.getHint().toString().split(" ")));
-
 
 
             user.signUpInBackground(new SignUpCallback() {
@@ -547,8 +544,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                     /*
                                       TODO, Do we need this object in addition to the Profile Object or should we get rid of User class?
                                      */
-                                    User newUser = createUser();
-                                    listener.onRegisterComplete(newUser);
+                                    //User newUser = createUser();
+                                    listener.onRegisterComplete();
                                 }
                             }
                         });

@@ -12,7 +12,9 @@ public class ParseApplication extends Application {
         super.onCreate();
 
         //Register Profile Subclass
+        ParseObject.registerSubclass(ConversationList.class);
         ParseObject.registerSubclass(Profile.class);
+        ParseObject.registerSubclass(Conversation.class);
 
 
         Parse.initialize(new Parse.Configuration.Builder(this)
@@ -22,4 +24,4 @@ public class ParseApplication extends Application {
                 .build()
         );
     }
-}
+}   

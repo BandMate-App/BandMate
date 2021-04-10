@@ -5,19 +5,20 @@
     android:layout_height="match_parent"
     tools:context=".fragments.MessagesFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <RelativeLayout
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/conversations"
-            android:dividerHeight="1dp"
-            tools:listitem="@layout/chat_item">
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
 
-        </ListView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvConversationList"
+            android:transcriptMode="alwaysScroll"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </ScrollView>

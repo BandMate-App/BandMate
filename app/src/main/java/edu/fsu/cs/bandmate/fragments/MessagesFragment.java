@@ -7,9 +7,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -19,10 +21,24 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.fsu.cs.bandmate.Conversation;
+import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
+import edu.fsu.cs.bandmate.User;
+import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
 public class MessagesFragment extends Fragment {
+
+    private ArrayList<Conversation>  m_conversations;
+    //ArrayList<Pair<Conversation,ArrayList<String>>> conversations;
+    ConversationList list;
+    ArrayList<List<Object>> messages;
+    ArrayList<Object> matches;
+    ArrayList<Object> pictures;
+
+
+
 
 
     public MessagesFragment() {
@@ -38,8 +54,9 @@ public class MessagesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView =  inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        final View rootView =  inflater.inflate(R.layout.fragment_messages, container, false);
 
+        //conversations = new ArrayList<Pair<Conversation, ArrayList<String>>>();
 
 
         return rootView;
@@ -49,12 +66,18 @@ public class MessagesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         user = ParseUser.getCurrentUser();
-
+        m_conversations = new ArrayList<Conversation>();
+        messages = new ArrayList<List<Object>>();
+        matches = new ArrayList<Object>();
+        pictures = new ArrayList<Object>();
+        
         try {
-            queryMessages();
+            queryConversations();
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+
 
     }
 
@@ -63,6 +86,36 @@ public class MessagesFragment extends Fragment {
         public boolean isConversationSelected(final String conversationId);
     }
 
-    private void queryMessages() throws ParseException {
+    private void queryConversations() throws ParseException {
+        ParseQuery<ConversationList> query = ParseQuery.getQuery(ConversationList.class);
+        query.include(ConversationList.KEY_USER);
+        query.whereEqualTo(ConversationList.KEY_USER, user);
+        List<ConversationList> conversationLists = query.find();
+
+        if (conversationLists == null || conversationLists.size()==0) {
+            ParseObject messagesList = ParseObject.create("ConversationList");
+            messagesList.put(ConversationList.KEY_USER, ParseUser.getCurrentUser());
+            messagesList.saveInBackground();
+        }
+        list = conversationLists.get(0);
+        m_conversations = list.getConversations();
+        initConversationItems();
+
+
+    }
+
+    private void loadMessages(){
+        ParseQuery<Conversation> query = ParseQuery.getQuery(Conversation.class);
+    }
+
+    private void initConversationItems() throws ParseException {
+        for (Conversation c : m_conversations){
+            messages.add(c.fetchIfNeeded().getList(Conversation.KEY_MESSAGES));
+            ParseUser other = (ParseUser) c.fetchIfNeeded().getParseObject(Conversation.KEY_OTHER);
+            Profile otherProfile = new Profile();
+            otherProfile = (Profile) other.fetchIfNeeded().getParseObject("myProfile");
+            matches.add(other);
+            pictures.add(otherProfile.fetchIfNeeded().get(Profile.KEY_PROFILEPICTURE));
+        }
     }
 }
