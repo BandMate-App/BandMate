@@ -12,7 +12,8 @@ import java.util.List;
 
  Uses profile map to map gender, instrument, and secondary instruments to integers
  */
-public class User{
+@ParseClassName("User")
+public class User extends ParseObject {
 
 /*
 Default Constructor sets all variables to invalid values

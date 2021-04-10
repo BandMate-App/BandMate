@@ -7,6 +7,9 @@ import com.parse.ParseUser;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 
 @ParseClassName("Profile")
 public class Profile extends ParseObject {
@@ -31,12 +34,15 @@ public class Profile extends ParseObject {
     public ParseUser getUser(){
         return getParseUser(KEY_USER);
     }
-
     public String getName(){
-        return (String) getParseUser(KEY_USER).get(KEY_NAME);
+        return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_NAME);
     }
 
-    public String getGenre(){return getString(KEY_GENRE);}
+    public String getGenre(){return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_PRIMARYGENRE);}
+    public String getBirthday(){return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_BIRTHDAY);}
+    public String getPrimaryInstrument(){return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_PRIMARYINSTRUMENT);}
+    public ArrayList<String> getSecondaryInstruments(){return (ArrayList<String>) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_SECONDARYINSTRUMENTS);}
+    public String getGender(){return (String) Objects.requireNonNull(getParseUser(KEY_USER)).get(KEY_GENDER);}
 
     public void putUser(ParseUser user){
         this.put(KEY_USER,user);

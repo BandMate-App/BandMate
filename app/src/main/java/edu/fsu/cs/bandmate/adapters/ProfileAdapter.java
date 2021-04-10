@@ -63,6 +63,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         }
 
         public void bind(Profile profile) {
+            if (profile == null) return;
             tvName.setText(profile.getName());
             tvGenre.setText(profile.getGenre());
             Glide.with(context)
