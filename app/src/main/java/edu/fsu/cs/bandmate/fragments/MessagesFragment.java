@@ -5,12 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -20,6 +23,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.fsu.cs.bandmate.Conversation;
 import edu.fsu.cs.bandmate.ConversationList;
@@ -76,6 +80,13 @@ public class MessagesFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        MessageListAdapter adapter = new MessageListAdapter(getActivity(),matches,messages,pictures);
+
+        mRecyclerView = view.findViewById(R.id.rvConversationList);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
 
