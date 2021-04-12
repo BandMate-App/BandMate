@@ -1,9 +1,12 @@
 package edu.fsu.cs.bandmate.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -34,15 +38,13 @@ import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
 public class MessagesFragment extends Fragment {
 
-    private ArrayList<Conversation>  m_conversations;
+    private ArrayList<Conversation> m_conversations;
     //ArrayList<Pair<Conversation,ArrayList<String>>> conversations;
     ConversationList list;
     ArrayList<List<Object>> messages;
-    ArrayList<Object> matches;
-    ArrayList<Object> pictures;
-
-
-
+    ArrayList<ParseUser> matches;
+    ArrayList<Bitmap> pictures;
+    CardView conversationItem;
 
 
     public MessagesFragment() {
@@ -53,15 +55,13 @@ public class MessagesFragment extends Fragment {
     private RecyclerView mRecyclerView;
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView =  inflater.inflate(R.layout.fragment_messages, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_messages, container, false);
 
         //conversations = new ArrayList<Pair<Conversation, ArrayList<String>>>();
-
 
         return rootView;
     }
@@ -72,16 +72,18 @@ public class MessagesFragment extends Fragment {
         user = ParseUser.getCurrentUser();
         m_conversations = new ArrayList<Conversation>();
         messages = new ArrayList<List<Object>>();
-        matches = new ArrayList<Object>();
-        pictures = new ArrayList<Object>();
-        
+        matches = new ArrayList<>();
+        pictures = new ArrayList<>();
+
+
+
         try {
             queryConversations();
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        MessageListAdapter adapter = new MessageListAdapter(getActivity(),matches,messages,pictures);
+        MessageListAdapter adapter = new MessageListAdapter(getActivity(), matches, messages, pictures);
 
         mRecyclerView = view.findViewById(R.id.rvConversationList);
         mRecyclerView.setAdapter(adapter);
@@ -89,11 +91,11 @@ public class MessagesFragment extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
-
     }
 
     public interface MessagesHost {
         public void onConversationClick();
+
         public boolean isConversationSelected(final String conversationId);
     }
 
@@ -103,30 +105,48 @@ public class MessagesFragment extends Fragment {
         query.whereEqualTo(ConversationList.KEY_USER, user);
         List<ConversationList> conversationLists = query.find();
 
-        if (conversationLists == null || conversationLists.size()==0) {
+        if (conversationLists == null || conversationLists.size() == 0) {
             ParseObject messagesList = ParseObject.create("ConversationList");
             messagesList.put(ConversationList.KEY_USER, ParseUser.getCurrentUser());
             messagesList.saveInBackground();
         }
         list = conversationLists.get(0);
         m_conversations = list.getConversations();
-        initConversationItems();
+        if(m_conversations != null)
+            initConversationItems();
 
 
     }
 
-    private void loadMessages(){
+    private void queryProfile() throws ParseException {
+        for (ParseUser other : matches) {
+            ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
+            query.include(Profile.KEY_USER);
+            query.whereEqualTo(Profile.KEY_USER, other);
+            List<Profile> otherProfile = query.find();
+            if (otherProfile.size() != 1)
+                Toast.makeText(getActivity(), "error getting profile", Toast.LENGTH_SHORT).show();
+
+            byte[] data = otherProfile.get(0).getImage().getData();
+            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
+            pictures.add(bmp);
+        }
+    }
+
+    private void loadMessages() {
         ParseQuery<Conversation> query = ParseQuery.getQuery(Conversation.class);
     }
 
     private void initConversationItems() throws ParseException {
-        for (Conversation c : m_conversations){
+        for (Conversation c : m_conversations) {
             messages.add(c.fetchIfNeeded().getList(Conversation.KEY_MESSAGES));
             ParseUser other = (ParseUser) c.fetchIfNeeded().getParseObject(Conversation.KEY_OTHER);
             Profile otherProfile = new Profile();
             otherProfile = (Profile) other.fetchIfNeeded().getParseObject("myProfile");
             matches.add(other);
-            pictures.add(otherProfile.fetchIfNeeded().get(Profile.KEY_PROFILEPICTURE));
         }
+        queryProfile();
     }
+
+
 }

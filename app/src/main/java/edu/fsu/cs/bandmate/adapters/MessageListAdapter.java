@@ -1,6 +1,7 @@
 package edu.fsu.cs.bandmate.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +26,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     Context context;
     ConversationList list;
     ArrayList<List<Object>> messages;
-    ArrayList<Object> matches;
-    ArrayList<Object> pictures;
+    ArrayList<ParseUser> matches;
+    ArrayList<Bitmap> pictures;
 
     //TODO add latest message time
-    public MessageListAdapter(Context context, ArrayList<Object>otherUser,
-                              ArrayList<List<Object>> Messages, ArrayList<Object> pictures){
+    public MessageListAdapter(Context context, ArrayList<ParseUser> otherUser,
+                              ArrayList<List<Object>> Messages, ArrayList<Bitmap> pictures){
         this.matches=otherUser;
         this.context = context;
         this.messages = Messages;
@@ -46,6 +50,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
             username = itemView.findViewById(R.id.tvUsername);
             recentMessage = itemView.findViewById(R.id.tvMessage);
             profile_pic = itemView.findViewById(R.id.ivProfilePicture);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getLayoutPosition();
+
+                }
+            });
         }
     }
 
@@ -58,11 +69,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.username.setText(matches.get(position).toString());
-        holder.recentMessage.setText(messages.get(position).get(messages.lastIndexOf(messages.get(position))).toString());
-        holder.profile_pic.setImageResource(R.drawable.stream_ui_badge_bg);
-
+        holder.username.setText(matches.get(position).getUsername());
+        holder.recentMessage.setText(messages.get(position).get(messages.get(position).size()-1).toString());
+        holder.profile_pic.setImageBitmap(pictures.get(position));
     }
+
 
     @Override
     public int getItemCount() {

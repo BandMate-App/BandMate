@@ -57,7 +57,8 @@ import org.jetbrains.annotations.NotNull;
 public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
     public static final String KEY_PHONE="Phone",KEY_NAME="Name",KEY_USER="User",
             KEY_PRIMARY_INSTRUMENT="Primary Instrument",KEY_PRIMARY_GENRE="Primary Genre",
-            KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",KEY_BIRTHDAY="Birthday",
+            KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",
+            KEY_BIRTHDAY="Birthday",
             KEY_EMAIL = "Email";
 
     final private int MIN_AGE = 13; // Minimum age according to COPPA
