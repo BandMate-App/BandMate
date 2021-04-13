@@ -1,5 +1,6 @@
 package edu.fsu.cs.bandmate.fragments;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +36,7 @@ import edu.fsu.cs.bandmate.Conversation;
 import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
+import edu.fsu.cs.bandmate.SelectedConversation;
 import edu.fsu.cs.bandmate.User;
 import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
@@ -45,6 +49,7 @@ public class MessagesFragment extends Fragment {
     ArrayList<ParseUser> matches;
     ArrayList<Bitmap> pictures;
     CardView conversationItem;
+    MessagesHost listener;
 
 
     public MessagesFragment() {
@@ -84,7 +89,7 @@ public class MessagesFragment extends Fragment {
         }
 
         MessageListAdapter adapter = new MessageListAdapter(getActivity(), matches, messages, pictures);
-
+        adapter.setListener(listener);
         mRecyclerView = view.findViewById(R.id.rvConversationList);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -94,7 +99,7 @@ public class MessagesFragment extends Fragment {
     }
 
     public interface MessagesHost {
-        public void onConversationClick();
+        public void onConversationClick(SelectedConversation selected);
 
         public boolean isConversationSelected(final String conversationId);
     }
@@ -124,7 +129,7 @@ public class MessagesFragment extends Fragment {
             query.include(Profile.KEY_USER);
             query.whereEqualTo(Profile.KEY_USER, other);
             List<Profile> otherProfile = query.find();
-            if (otherProfile.size() != 1)
+            if (otherProfile.size() < 1)
                 Toast.makeText(getActivity(), "error getting profile", Toast.LENGTH_SHORT).show();
 
             byte[] data = otherProfile.get(0).getImage().getData();
@@ -146,6 +151,17 @@ public class MessagesFragment extends Fragment {
             matches.add(other);
         }
         queryProfile();
+    }
+
+    @Override
+    public void onAttach(@NotNull Context context) {
+        super.onAttach(context);
+        if (context instanceof MessagesFragment.MessagesHost) {
+            listener = (MessagesFragment.MessagesHost) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
 

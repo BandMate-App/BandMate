@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,8 @@ import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
+import edu.fsu.cs.bandmate.fragments.ChatFragment;
 import edu.fsu.cs.bandmate.fragments.FeedFragment;
 import edu.fsu.cs.bandmate.fragments.LoginFragment;
 import edu.fsu.cs.bandmate.fragments.MainFragment;
@@ -25,8 +28,11 @@ import edu.fsu.cs.bandmate.fragments.RegisterFragment;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
-        LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener {
+        LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener, MessagesFragment.MessagesHost {
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
     private AlertDialog dialog;
@@ -145,9 +151,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
 
     @Override
     public void onRegisterComplete() {
-        //ParseObject messagesList = ParseObject.create("ConversationList");
-        //messagesList.put(ConversationList.KEY_USER,ParseUser.getCurrentUser());
-        //messagesList.saveInBackground();
 
         m_loggedIn = true;
         onFeed();
@@ -162,6 +165,25 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     public void onCancel() {
         onMain();
     }
+
+
+
+
+    /*@Override
+    public void onConversationSelected(List<Object> messages, ParseUser match, Bitmap picture) {
+        Bundle bundle = new Bundle();
+        ArrayList<String> temp= new ArrayList<String>();
+        for (int i = 0; i < messages.size();i++){
+            temp.add(messages.get(i).toString());
+        }
+        bundle.putStringArrayList(ConversationList.KEY_CONVERSATION,temp);
+
+       ChatFragment fragment = new ChatFragment();
+        String tag = ChatFragment.class.getCanonicalName();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment).commitNow();
+    }
+    */
+
 
     /*
       End fragment interface function implementations
@@ -217,5 +239,19 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
             return true;
         }
     return false;
+    }
+
+
+    @Override
+    public void onConversationClick(SelectedConversation selected) {
+        ChatFragment fragment = new ChatFragment();
+        String tag = ChatFragment.class.getCanonicalName();
+        getIntent().putExtra("selected",selected);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment).commitNow();
+    }
+
+    @Override
+    public boolean isConversationSelected(String conversationId) {
+        return false;
     }
 }
