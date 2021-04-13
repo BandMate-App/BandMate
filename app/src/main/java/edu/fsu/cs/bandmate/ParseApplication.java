@@ -15,6 +15,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(ConversationList.class);
         ParseObject.registerSubclass(Profile.class);
         ParseObject.registerSubclass(Conversation.class);
+        ParseObject.registerSubclass(Message.class);
 
 
         Parse.initialize(new Parse.Configuration.Builder(this)

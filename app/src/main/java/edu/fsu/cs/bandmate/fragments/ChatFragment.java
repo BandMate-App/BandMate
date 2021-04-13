@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +23,7 @@ import java.util.Objects;
 
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.SelectedConversation;
+import edu.fsu.cs.bandmate.adapters.ChatAdapter;
 import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
 
@@ -28,10 +32,11 @@ public class ChatFragment extends Fragment{
     SelectedConversation selected;
     EditText message;
     ImageButton send;
-
+    ChatAdapter adapter;
     List<Object> messages;
     Bitmap avatar;
     ParseUser match;
+    RecyclerView mRecyclerView;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -52,7 +57,11 @@ public class ChatFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         message = view.findViewById(R.id.etMessage);
         send = view.findViewById(R.id.btSend);
-
+        adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),selected.messages,selected.picture);
+        mRecyclerView = view.findViewById(R.id.rvChat);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +74,9 @@ public class ChatFragment extends Fragment{
 
     public void SendMessage(){
 
+    }
+
+    public void setupChat(){
     }
 
 }
