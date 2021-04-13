@@ -1,6 +1,7 @@
 package edu.fsu.cs.bandmate;
 
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 import android.app.Application;
@@ -21,5 +22,8 @@ public class ParseApplication extends Application {
                 .server("https://parseapi.back4app.com")
                 .build()
         );
+        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+        parseInstallation.put("GCMSenderId","779436643107");
+        parseInstallation.saveInBackground();
     }
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "779436643107",
+    "project_id": "bandmate-308916",
+    "storage_bucket": "bandmate-308916.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779436643107:android:53cac4a5c6395ac8a4f296",
+        "android_client_info": {
+          "package_name": "edu.fsu.cs.bandmate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "779436643107-mhlrija4b97t947a7pjeh1c3u24ibphu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcNnBfDajZPdwDUIV6A9el1GOu62XYkaE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "779436643107-mhlrija4b97t947a7pjeh1c3u24ibphu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
