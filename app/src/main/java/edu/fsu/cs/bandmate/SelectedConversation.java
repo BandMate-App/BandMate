@@ -7,11 +7,11 @@ import java.io.Serializable;
 import java.util.List;
 
 public class SelectedConversation implements Serializable {
-    public List<Object> messages;
+    public Conversation conversation;
     public ParseUser match;
     public Bitmap picture;
-    public SelectedConversation(List<Object> messages,ParseUser match,Bitmap picture){
-        this.messages = messages;
+    public SelectedConversation(Conversation messages,ParseUser match,Bitmap picture){
+        this.conversation = messages;
         this.match = match;
         this.picture = picture;
     }

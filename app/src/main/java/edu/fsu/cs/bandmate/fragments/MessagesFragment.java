@@ -88,7 +88,7 @@ public class MessagesFragment extends Fragment {
             e.printStackTrace();
         }
 
-        MessageListAdapter adapter = new MessageListAdapter(getActivity(), matches, messages, pictures);
+        MessageListAdapter adapter = new MessageListAdapter(getActivity(), matches, m_conversations, pictures);
         adapter.setListener(listener);
         mRecyclerView = view.findViewById(R.id.rvConversationList);
         mRecyclerView.setAdapter(adapter);
@@ -144,13 +144,16 @@ public class MessagesFragment extends Fragment {
 
     private void initConversationItems() throws ParseException {
         for (Conversation c : m_conversations) {
-            messages.add(c.fetchIfNeeded().getList(Conversation.KEY_MESSAGES));
+            //messages.add(c.fetchIfNeeded().getList(Conversation.KEY_MESSAGES));
             ParseUser other = (ParseUser) c.fetchIfNeeded().getParseObject(Conversation.KEY_OTHER);
             Profile otherProfile = new Profile();
             otherProfile = (Profile) other.fetchIfNeeded().getParseObject("myProfile");
+            byte[] data = otherProfile.fetchIfNeeded().getParseFile(Profile.KEY_PROFILEPICTURE).getData();
+            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
+            pictures.add(bmp);
             matches.add(other);
         }
-        queryProfile();
+        //queryProfile();
     }
 
     @Override

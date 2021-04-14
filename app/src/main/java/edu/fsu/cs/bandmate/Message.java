@@ -20,7 +20,7 @@ public class Message extends ParseObject {
     public static final String KEY_USER = "user";
 
     public String getbody(){
-        return getString(KEY_BODY);
+        return getString(KEY_BODY).replace("\"", "");
     }
 
     public String getUser(){

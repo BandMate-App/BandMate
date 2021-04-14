@@ -12,18 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import edu.fsu.cs.bandmate.Conversation;
 import edu.fsu.cs.bandmate.Message;
 import edu.fsu.cs.bandmate.R;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder>{
-    private List<Message> parseMessages;
-    private List<Object> messages;
+    private ArrayList<Message> parseMessages;
+    private Conversation conversation;
     private Context mContext;
     private String username;
     private Bitmap icon;
@@ -58,16 +61,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         public IncomingMessageViewHolder(@NonNull View itemView) {
             super(itemView);
             iv_other = (ImageView)itemView.findViewById(R.id.ivProfileOther);
-            body = (TextView) itemView.findViewById(R.id.tvMessage);
+            body = (TextView) itemView.findViewById(R.id.tvBody);
             name = (TextView)itemView.findViewById(R.id.tvName);
 
         }
 
         @Override
         void bindMessage(Message message) {
-            iv_other = (ImageView) itemView.findViewById(R.id.ivProfileOther);
-            body = (TextView) itemView.findViewById(R.id.tvBody);
-            name = (TextView)itemView.findViewById(R.id.tvName);
+            iv_other.setImageBitmap(icon);
+            body.setText(message.getbody());
+            name.setText(message.getUser());
         }
     }
 
@@ -76,24 +79,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         public OutgoingMessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            iv_me = (ImageView) itemView.findViewById(R.id.ivProfileOther);
+            iv_me = (ImageView) itemView.findViewById(R.id.ivProfileMe);
             body = (TextView) itemView.findViewById(R.id.tvBody);
-            name = (TextView)itemView.findViewById(R.id.tvName);
 
         }
 
         @Override
         void bindMessage(Message message) {
             body.setText(message.getbody());
-            name.setText(message.getUser());
+            iv_me.setImageBitmap(icon);
 
         }
     }
 
-    public ChatAdapter(Context context, String username, List<Object> messages,Bitmap icon){
-        this.messages = messages;
+    public ChatAdapter(Context context, String username, Conversation conversation,Bitmap icon) throws ParseException {
+        this.conversation = conversation;
         this.username = username;
         this.icon = icon;
+        parseMessages = (ArrayList<Message>) conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
     }
 
     @NotNull
@@ -122,7 +125,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public int getItemCount() {
-        return 0;
+        ArrayList<Object> temp = null;
+        try {
+            temp = (ArrayList<Object>) conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return temp.size();
     }
 
     private boolean isMe(int position){

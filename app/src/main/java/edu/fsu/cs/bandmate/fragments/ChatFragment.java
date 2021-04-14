@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -57,7 +58,11 @@ public class ChatFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         message = view.findViewById(R.id.etMessage);
         send = view.findViewById(R.id.btSend);
-        adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),selected.messages,selected.picture);
+        try {
+            adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),selected.conversation,selected.picture);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         mRecyclerView = view.findViewById(R.id.rvChat);
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

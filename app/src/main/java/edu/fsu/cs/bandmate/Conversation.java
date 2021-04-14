@@ -16,6 +16,8 @@ public class Conversation extends ParseObject {
     public static final String KEY_CONVERSATION_ID = "conversationId";
     public static final String KEY_SELF="self";
     public static final String KEY_OTHER="other";
+    public static final String KEY_MESSAGEOBJECT ="Messages";
+    public static final String KEY_OBJECTID ="objectId";
 
     public ArrayList<String> getMessages(){
         return (ArrayList<String>) this.get(KEY_MESSAGES);
