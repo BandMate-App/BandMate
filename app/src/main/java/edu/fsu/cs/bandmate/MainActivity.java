@@ -240,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements
     public boolean isConversationSelected(String conversationId) {
         return false;
     }
-}
     @Override
     public void openEditProfileFragment() {
         EditProfileFragment editProfileFragment = new EditProfileFragment();
