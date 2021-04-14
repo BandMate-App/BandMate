@@ -1,40 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvName"
-        android:text="PLACEHOLDER NAME"
-        android:layout_toEndOf="@id/ivProfileOther"
-        android:layout_alignTop="@id/ivProfileOther"
-        >
-    </TextView>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvChatItem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/ivProfileOther"
-        android:layout_alignParentStart="true"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher"
-        android:contentDescription="Other Profile PLACEHOLDER"
-        >
-    </ImageView>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvBody"
-        android:layout_below="@+id/tvName"
-        android:text="some message PLACEHOLDER"
-        android:layout_alignStart="@id/tvName"
-        android:background="@drawable/message_incoming"
-        android:textColor="@color/white"
-        >
-    </TextView>
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/ivProfileOther"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="205dp"
+                android:layout_marginBottom="34dp"
+                android:layout_toEndOf="@id/ivProfileOther"
+                android:text="PLACEHOLDER NAME"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ivProfileOther"
+                app:layout_constraintTop_toTopOf="parent">
 
-</RelativeLayout>
+            </TextView>
+
+            <ImageView
+                android:id="@+id/ivProfileOther"
+                android:layout_width="64dp"
+                android:layout_height="0dp"
+                android:layout_alignParentStart="true"
+                android:contentDescription="Other Profile PLACEHOLDER"
+                android:src="@mipmap/ic_launcher"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tvName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/tvBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvName"
+                android:background="@drawable/message_incoming"
+                android:text="some message PLACEHOLDER"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.046"
+                app:layout_constraintStart_toEndOf="@+id/ivProfileOther"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0">
+
+            </TextView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
