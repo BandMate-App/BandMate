@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import edu.fsu.cs.bandmate.Conversation;
+import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.Message;
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.SelectedConversation;
@@ -37,6 +39,8 @@ import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
 
 public class ChatFragment extends Fragment{
+    ConversationList self_list;
+    ConversationList other_list;
     ParseUser currentUser;
     Conversation conversationOther;
     SelectedConversation selected;
@@ -54,7 +58,7 @@ public class ChatFragment extends Fragment{
         @Override
         public void run() {
             try {
-                refreshMessages();
+                 refreshChat();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -94,49 +98,75 @@ public class ChatFragment extends Fragment{
 
         try {
             setConversationOther();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        etmessage = view.findViewById(R.id.etMessage);
-        send = view.findViewById(R.id.btSend);
-        try {
-            adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),selected.conversation,selected.picture);
+            currentConversation = (ArrayList<Message>) selected.conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
+            adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),currentConversation,selected.picture);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        try {
-            currentConversation = (ArrayList<Message>) selected.conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        etmessage = view.findViewById(R.id.etMessage);
+        send = view.findViewById(R.id.btSend);
             mRecyclerView = view.findViewById(R.id.rvChat);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         mRecyclerView.setAdapter(adapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        final LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setReverseLayout(true);
+
+        mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String data = etmessage.getText().toString();
-                ParseObject message = ParseObject.create("Message");
-                message.put(Message.KEY_USER,ParseUser.getCurrentUser().getUsername());
-                message.put(Message.KEY_BODY,data);
-                try {
-                    message.save();
+
+                try {   // make a pointless save to each users conversation list to updated the objects updated at value, so the message fragment will be updated
+                    other_list = (ConversationList)selected.conversation.fetchIfNeeded().getParseObject("c_list1");
+                    self_list = (ConversationList) selected.conversation.fetchIfNeeded().getParseObject("c_list2");
+                    other_list.fetchIfNeeded().put(ConversationList.KEY_CONVERSATION,other_list.fetchIfNeeded().get(ConversationList.KEY_CONVERSATION));
+                    self_list.fetchIfNeeded().put(ConversationList.KEY_CONVERSATION,self_list.fetchIfNeeded().get(ConversationList.KEY_CONVERSATION));
+                    other_list.saveInBackground();
+                    self_list.saveInBackground();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                currentConversation.add((Message)message);
-                //selected.conversation.put(Conversation.KEY_MESSAGEOBJECT,currentConversation);
-                selected.conversation.add(Conversation.KEY_MESSAGEOBJECT,message);
-                selected.conversation.saveInBackground();
 
-                conversationOther.add(Conversation.KEY_MESSAGEOBJECT,message);
+
+                String data = etmessage.getText().toString();
+
+                // Add the new message to the current users conversation object
+                ParseObject message = ParseObject.create("Message");
+                message.put(Message.KEY_USER,ParseUser.getCurrentUser().getUsername());
+                message.put(Message.KEY_BODY,data);
+
+                //add the new message to the matches conversation object
+                /*
+                ParseObject otherMessage = ParseObject.create("Message");
+                otherMessage.put(Message.KEY_USER,ParseUser.getCurrentUser().getUsername());
+                otherMessage.put(Message.KEY_BODY,data);
+
+
+                try {
+                    message.save();
+                    otherMessage.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+ */
+                try {
+                    selected.conversation.fetchIfNeeded();
+                    selected.conversation.add(Conversation.KEY_MESSAGEOBJECT,message.fetchIfNeeded());
+                    conversationOther.add(Conversation.KEY_MESSAGEOBJECT,message.fetchIfNeeded());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                selected.conversation.saveInBackground();
                 conversationOther.saveInBackground();
                 etmessage.setText(null);
-                adapter.notifyDataSetChanged();
 
+                //update the list passed to the adapter and notify the adapter of a new item
+                currentConversation.add((Message)message);
+                adapter.notifyDataSetChanged();
+                mRecyclerView.scrollToPosition(0);
 
             }
         });
@@ -144,15 +174,24 @@ public class ChatFragment extends Fragment{
         return view;
     }
 
-    public void refreshMessages() throws ParseException {
+    public void refreshChat() throws ParseException {
         ArrayList<Message>  current = (ArrayList<Message>) selected.conversation.fetch().get(Conversation.KEY_MESSAGEOBJECT);
         assert current != null;
-        if(currentConversation.size() != current.size()){
+        if(current.size() == 1 && currentConversation.size() == 0) {
+            currentConversation.add(current.get(0));
             adapter.notifyDataSetChanged();
-            if(firstload){
-                mRecyclerView.scrollToPosition(0);
-                firstload = false;
+        }
+
+        else if(currentConversation.size() != current.size()){
+            int index = currentConversation.size();
+            while(currentConversation.size()!= current.size())
+            {
+                currentConversation.add(current.get(index));
+                index +=1;
             }
+            adapter.notifyDataSetChanged();
+            mRecyclerView.scrollToPosition(0);
+
         }
     }
 
@@ -167,15 +206,8 @@ public class ChatFragment extends Fragment{
         query = query.whereEqualTo(Conversation.KEY_SELF,other);
         List<Conversation> temp =  query.find();
 
-      /*  for(Conversation c : temp){
-            other = (ParseUser) c.fetchIfNeeded().get("other");
-            assert other != null;
-            if(other.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
-                conversationOther = c;
-            }
-        }*/
+
         conversationOther = temp.get(0);
-       // Toast.makeText(getContext(),"conversation set",Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.getstream.sdk.chat.utils.DateFormatter;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -29,6 +30,12 @@ import com.parse.ParseUser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +57,7 @@ public class MessagesFragment extends Fragment {
     MessageListAdapter adapter;
     //ArrayList<Pair<Conversation,ArrayList<String>>> conversations;
     ConversationList list;
+    ArrayList<String> lastMessage;
     Date lastUpdated;
     ArrayList<List<Object>> messages;
     ArrayList<ParseUser> matches;
@@ -57,7 +65,7 @@ public class MessagesFragment extends Fragment {
     CardView conversationItem;
     MessagesHost listener;
     Handler myHandler = new android.os.Handler();
-    Runnable RefreshChatRunnable = new Runnable() {
+    Runnable RefreshMessagesRunnable = new Runnable() {
         @Override
         public void run() {
             try {
@@ -72,7 +80,7 @@ public class MessagesFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
-        myHandler.postDelayed(RefreshChatRunnable,TimeUnit.SECONDS.toMillis(3));
+        myHandler.postDelayed(RefreshMessagesRunnable,TimeUnit.SECONDS.toMillis(3));
     }
 
     @Override
@@ -97,7 +105,6 @@ public class MessagesFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_messages, container, false);
 
-        //conversations = new ArrayList<Pair<Conversation, ArrayList<String>>>();
 
         return rootView;
     }
@@ -110,17 +117,27 @@ public class MessagesFragment extends Fragment {
         messages = new ArrayList<List<Object>>();
         matches = new ArrayList<>();
         pictures = new ArrayList<>();
-        lastUpdated = new Date(1999,1,1);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss z");
+        lastUpdated = new Date();
+
+        lastMessage = new ArrayList<>();
 
 
 
         try {
             queryConversations();
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        adapter = new MessageListAdapter(getActivity(), matches, m_conversations, pictures);
+        try {
+            getLastMessage();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        adapter = new MessageListAdapter(getActivity(), matches, m_conversations, pictures,lastMessage,list);
         adapter.setListener(listener);
         mRecyclerView = view.findViewById(R.id.rvConversationList);
         mRecyclerView.setAdapter(adapter);
@@ -151,29 +168,14 @@ public class MessagesFragment extends Fragment {
             messagesList.saveInBackground();
         }
         list = conversationLists.get(0);
-        m_conversations = list.getConversations();
+        m_conversations = (ArrayList<Conversation>) list.fetchIfNeeded().get(ConversationList.KEY_CONVERSATION);
         if(m_conversations != null)
             initConversationItems();
 
 
     }
 
-  /*  private void queryProfile() throws ParseException {
-        for (ParseUser other : matches) {
-            ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
-            query.include(Profile.KEY_USER);
-            query.whereEqualTo(Profile.KEY_USER, other);
-            List<Profile> otherProfile = query.find();
-            if (otherProfile.size() < 1)
-                Toast.makeText(getActivity(), "error getting profile", Toast.LENGTH_SHORT).show();
 
-            byte[] data = otherProfile.get(0).getImage().getData();
-            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
-            pictures.add(bmp);
-        }
-    }
-
-   */
 
     private void loadMessages() {
         ParseQuery<Conversation> query = ParseQuery.getQuery(Conversation.class);
@@ -205,13 +207,30 @@ public class MessagesFragment extends Fragment {
     }
 
     public void refreshMessages() throws ParseException {
-        //ConversationList query = (ConversationList)list.fetch().get(ConversationList.KEY_CONVERSATION);
-        if (lastUpdated != list.getUpdatedAt())
-        {
-            adapter.notifyDataSetChanged();
-            lastUpdated = list.getUpdatedAt();
-        }
-    }
 
+        if(list.fetch().getUpdatedAt().after(lastUpdated)){
+            getLastMessage();
+            adapter.notifyDataSetChanged();
+        }
+        }
+
+
+    public void getLastMessage() throws ParseException {
+        for (int i = 0; i <m_conversations.size();i++){
+            ArrayList<Message> msg = (ArrayList<Message>)m_conversations.get(i).fetch().get(Conversation.KEY_MESSAGEOBJECT);
+            if (msg.size() != 0) {
+                String temp = ((String) msg.get(msg.size() - 1).fetchIfNeeded().get("body"));
+
+                if(lastMessage.isEmpty())
+                    lastMessage.add(temp);
+                else if(!lastMessage.get(i).equals(temp))
+                    lastMessage.set(i,temp);
+            }
+        }
+        list.put(ConversationList.KEY_CONVERSATION,m_conversations);
+        list.saveInBackground();
+        lastUpdated = list.getUpdatedAt();
+
+    }
 
 }

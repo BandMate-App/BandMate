@@ -36,16 +36,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     ArrayList<Bitmap> pictures;
     CardView cardview;
     MessagesFragment.MessagesHost listener;
-    String lastMessage;
+    ArrayList<String> lastMessage;
+    //String lastMessage;
     //messages_listener listener;
 
     //TODO add latest message time
     public MessageListAdapter(Context context, ArrayList<ParseUser> otherUser,
-                              ArrayList<Conversation> conversation, ArrayList<Bitmap> pictures){
+                              ArrayList<Conversation> conversation, ArrayList<Bitmap> pictures, ArrayList<String> lastMessage, ConversationList list){
         this.matches=otherUser;
         this.context = context;
         this.conversation = conversation;
         this.pictures = pictures;
+        this.lastMessage = lastMessage;
+        this.list = list;
 
 
 
@@ -88,17 +91,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.username.setText(matches.get(position).getUsername());
         //holder.recentMessage.setText(messages.get(position).get(messages.get(position).size()-1).toString());
-        try {
-            holder.recentMessage.setText(getLastMessage(position));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        };
+        if (lastMessage.size() == 0) {
+            holder.recentMessage.setText("");
+        }
+        else {
+            holder.recentMessage.setText(lastMessage.get(position));
+        }
+
         holder.profile_pic.setImageBitmap(pictures.get(position));
         cardview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int index = holder.getAbsoluteAdapterPosition();
-                SelectedConversation selected = new SelectedConversation(conversation.get(position), matches.get(position), pictures.get(position));
+                SelectedConversation selected = new SelectedConversation(conversation.get(position), matches.get(position), pictures.get(position),conversation,list);
                 listener.onConversationClick(selected);
             }
         });
@@ -112,9 +117,5 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         return matches.size();
     }
 
-    public String getLastMessage(int position) throws ParseException {
-        ArrayList <Message> msg = (ArrayList<Message>) conversation.get(position).fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
-        return(String) msg.get(msg.size()-1).fetchIfNeeded().get("body");
-    }
 }
 

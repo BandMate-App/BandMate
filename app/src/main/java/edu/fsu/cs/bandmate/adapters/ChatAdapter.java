@@ -27,7 +27,8 @@ import edu.fsu.cs.bandmate.R;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder>{
     private ArrayList<Message> parseMessages;
-    private Conversation conversation;
+    //private Conversation conversation;
+    ArrayList<Message> conversation;
     private Context mContext;
     private String username;
     private Bitmap icon;
@@ -98,11 +99,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
     }
 
-    public ChatAdapter(Context context, String username, Conversation conversation,Bitmap icon) throws ParseException {
+    public ChatAdapter(Context context, String username, ArrayList<Message> conversation,Bitmap icon) throws ParseException {
         this.conversation = conversation;
         this.username = username;
         this.icon = icon;
-        parseMessages = (ArrayList<Message>) conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
     }
 
     @NotNull
@@ -110,11 +110,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        if(viewType == incoming){
+        if(viewType == outgoing){
             View contactView = inflater.inflate(R.layout.message_incoming,parent,false);
             return new IncomingMessageViewHolder(contactView);
         }
-        else if(viewType == outgoing){
+        else if(viewType == incoming){
             View contactView = inflater.inflate(R.layout.message_outgoing,parent,false);
             return new OutgoingMessageViewHolder(contactView);
         }
@@ -125,17 +125,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChatAdapter.ChatViewHolder holder, int position) {
-        Message message = parseMessages.get(position);
+        Message message = null;
+        try {
+            message = conversation.get(position).fetchIfNeeded();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         holder.bindMessage(message);
     }
 
     @Override
     public int getItemCount() {
-        return parseMessages.size();
+        return conversation.size();
     }
 
     private boolean isMe(int position) throws ParseException {
-        Message message = parseMessages.get(position);
+        Message message = conversation.get(position).fetchIfNeeded();
         return message.fetchIfNeeded().get(Message.KEY_USER).toString().replace("\"", "") != null && message.fetchIfNeeded().get(Message.KEY_USER).toString().replace("\"", "").equals(username);
     }
 }
