@@ -19,6 +19,8 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import edu.fsu.cs.bandmate.R;
+import edu.fsu.cs.bandmate.SelectedConversation;
+import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 

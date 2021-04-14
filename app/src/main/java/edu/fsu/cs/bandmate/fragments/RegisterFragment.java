@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.MainActivity;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
@@ -46,7 +47,9 @@ import edu.fsu.cs.bandmate.profileMap;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +58,8 @@ import org.jetbrains.annotations.NotNull;
 public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
     public static final String KEY_PHONE="Phone",KEY_NAME="Name",KEY_USER="User",
             KEY_PRIMARY_INSTRUMENT="Primary Instrument",KEY_PRIMARY_GENRE="Primary Genre",
-            KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",KEY_BIRTHDAY="Birthday",
+            KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",
+            KEY_BIRTHDAY="Birthday",
             KEY_EMAIL = "Email";
     private static final String TAG =RegisterFragment.class.getCanonicalName() ;
 
@@ -95,6 +99,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
+
 
 
         /*
@@ -437,7 +442,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     public interface RegisterFragmentListener{
-        void onRegisterComplete(User user);
+        void onRegisterComplete();
         void onCancel();
     }
 
@@ -476,7 +481,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String registerUsername=etUsername.getText().toString();
         String registerPhone=phoneNumber.getText().toString();
 
-        //TODO: Set Up and Collect extra info (gender,instruments)
 
 
 
@@ -509,7 +513,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
             if(!secondaryGenrePrompt.getHint().equals(getResources().getString(R.string.secondaryGenrePrompt)))
                 user.put(Profile.KEY_SECONDARYGENRE,Arrays.asList(secondaryGenrePrompt.getHint().toString().split(" ")));
-
 
 
             user.signUpInBackground(new SignUpCallback() {
@@ -555,8 +558,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                        from their outward facing profile.
 
                                      */
-                                    User newUser = createUser();
-                                    listener.onRegisterComplete(newUser);
+                                    //User newUser = createUser();
+                                    listener.onRegisterComplete();
                                 }
                             }
                         });
