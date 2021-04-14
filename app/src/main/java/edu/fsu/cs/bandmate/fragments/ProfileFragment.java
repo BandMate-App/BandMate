@@ -56,6 +56,8 @@ public class ProfileFragment extends Fragment {
     TextView profileGender;
     ImageView profileImage;
 
+    private String bundleUserName;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -88,6 +90,10 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        Bundle bundle = this.getArguments();
+        if (bundle != null){
+            bundleUserName = bundle.getString("profileUsername");
         }
     }
 
@@ -130,15 +136,20 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImageValue);
 
         try {
-            queryProfile();
+            if (bundleUserName != null)
+            queryProfile(bundleUserName);
+            else queryProfile(user.getUsername());
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
-    private void queryProfile() throws ParseException {
+    private void queryProfile(String userName) throws ParseException {
+        ParseQuery<ParseUser> userParseQuery = ParseUser.getQuery();
+        userParseQuery.whereEqualTo("username", userName);
+        List<ParseUser> users = userParseQuery.find();
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         query.include(Profile.KEY_USER);
-        query.whereEqualTo(Profile.KEY_USER, user);
+        query.whereEqualTo(Profile.KEY_USER, users.get(0));
         List<Profile> userProfile = query.find();
 
         if (userProfile.size() != 1)
