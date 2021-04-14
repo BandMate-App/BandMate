@@ -133,7 +133,9 @@ public class MessagesFragment extends Fragment {
         }
 
         try {
-            getLastMessage();
+            if(m_conversations!=null) {
+                getLastMessage();
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -165,12 +167,13 @@ public class MessagesFragment extends Fragment {
         if (conversationLists == null || conversationLists.size() == 0) {
             ParseObject messagesList = ParseObject.create("ConversationList");
             messagesList.put(ConversationList.KEY_USER, ParseUser.getCurrentUser());
-            messagesList.saveInBackground();
+            messagesList.save();
         }
         list = conversationLists.get(0);
         m_conversations = (ArrayList<Conversation>) list.fetchIfNeeded().get(ConversationList.KEY_CONVERSATION);
         if(m_conversations != null)
             initConversationItems();
+
 
 
     }
