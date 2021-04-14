@@ -23,6 +23,7 @@ import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Direction;
 import com.parse.ParseUser;
+import com.yuyakaido.android.cardstackview.StackFrom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class FeedFragment extends Fragment{
     ProfileAdapter profileAdapter;
     List<Profile> profileList;
     Context context;
+    int intProfileOnTop;
     CardStackListener cardStackListener = new CardStackListener() {
         @Override
         public void onCardDragging(Direction direction, float ratio) {
@@ -52,6 +54,11 @@ public class FeedFragment extends Fragment{
                 Toast.makeText(context, "Right Swipe", Toast.LENGTH_SHORT).show();
             }
 
+            if(intProfileOnTop==profileList.size()-1){
+                profileList.clear();
+                profileAdapter.notifyItemRangeRemoved(0,intProfileOnTop+1);
+                queryProfiles();
+            }
         }
 
         @Override
@@ -67,6 +74,7 @@ public class FeedFragment extends Fragment{
         @Override
         public void onCardAppeared(View view, int position) {
             Log.i(TAG,"Appeared: "+profileList.get(position).getName()+" position: "+position);
+            intProfileOnTop=position;
 
         }
 
@@ -104,6 +112,10 @@ public class FeedFragment extends Fragment{
         CardStackLayoutManager cardStackLayoutManager = new CardStackLayoutManager(context,cardStackListener);
         cardStackLayoutManager.setDirections(Direction.HORIZONTAL);
         cardStackLayoutManager.setCanScrollVertical(false);
+        cardStackLayoutManager.setScaleInterval(0.95f);
+        cardStackLayoutManager.setTranslationInterval(8.0f);
+        cardStackLayoutManager.setVisibleCount(3);
+        cardStackLayoutManager.setStackFrom(StackFrom.TopAndRight);
 
         rvFeed.setLayoutManager(cardStackLayoutManager);
 
@@ -129,7 +141,7 @@ public class FeedFragment extends Fragment{
                 }
 
                 profileAdapter.addAll(profiles);
-                profileAdapter.notifyDataSetChanged();
+                profileAdapter.notifyItemRangeInserted(0,profiles.size());
             }
         });
     }
