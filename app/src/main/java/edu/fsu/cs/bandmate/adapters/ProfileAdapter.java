@@ -11,9 +11,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.yuyakaido.android.cardstackview.CardStackView;
 
 import java.util.List;
@@ -92,8 +98,11 @@ public class ProfileAdapter extends CardStackView.Adapter<ProfileAdapter.ViewHol
             if (profile == null) return;
             tvName.setText(profile.getName());
             tvGenre.setText(profile.getGenre());
+
             Glide.with(context)
                     .load(profile.getImage().getUrl())
+                    .apply(new RequestOptions()
+                            .transform(new CenterCrop(), new RoundedCorners(16)))
                     .into(ivProfilePic);
         }
     }
