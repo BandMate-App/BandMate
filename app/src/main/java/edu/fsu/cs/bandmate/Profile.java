@@ -18,6 +18,7 @@ public class Profile extends ParseObject {
     public static final String KEY_PROFILEPICTURE="ProfilePicture";
     public static final String KEY_USER="user";
     public static final String KEY_NAME="Name";
+    public static final String KEY_USERNAME="username";
     public static final String KEY_GENRE="Genre";
     public static final String KEY_PRIMARYINSTRUMENT = "primary_instrument";
     public static final String KEY_PRIMARYGENRE = "primary_genre";
