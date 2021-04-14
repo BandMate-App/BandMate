@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -42,10 +43,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public int getItemViewType(int position){
-        if(isMe(position))
-            return outgoing;
-        else
-            return incoming;
+        try {
+            if(isMe(position))
+                return outgoing;
+            else
+                return incoming;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public abstract class  ChatViewHolder extends RecyclerView.ViewHolder{
@@ -125,17 +131,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public int getItemCount() {
-        ArrayList<Object> temp = null;
-        try {
-            temp = (ArrayList<Object>) conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return temp.size();
+        return parseMessages.size();
     }
 
-    private boolean isMe(int position){
+    private boolean isMe(int position) throws ParseException {
         Message message = parseMessages.get(position);
-        return message.getUser() != null && message.getUser().equals(username);
+        return message.fetchIfNeeded().get(Message.KEY_USER).toString().replace("\"", "") != null && message.fetchIfNeeded().get(Message.KEY_USER).toString().replace("\"", "").equals(username);
     }
 }

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@android:color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChat"
         android:transcriptMode="alwaysScroll"
@@ -10,9 +12,11 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/rlSend"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"/>
     <RelativeLayout
+        android:layout_weight="1"
         android:id="@+id/rlSend"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
@@ -20,7 +24,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp" >
         <EditText
             android:id="@+id/etMessage"
             android:layout_toLeftOf="@+id/btSend"
@@ -43,4 +47,4 @@
             android:src="@drawable/ic_send"
             android:textSize="18sp" />
     </RelativeLayout>
-</RelativeLayout>
+</LinearLayout>
