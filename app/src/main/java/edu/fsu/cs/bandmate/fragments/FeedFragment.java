@@ -25,8 +25,11 @@ import com.yuyakaido.android.cardstackview.Direction;
 import com.parse.ParseUser;
 import com.yuyakaido.android.cardstackview.StackFrom;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
@@ -38,8 +41,10 @@ public class FeedFragment extends Fragment{
     CardStackView rvFeed;
     ProfileAdapter profileAdapter;
     List<Profile> profileList;
+    feedListener listener;
     Context context;
     int intProfileOnTop;
+    CardStackLayoutManager cardStackLayoutManager;
     CardStackListener cardStackListener = new CardStackListener() {
         @Override
         public void onCardDragging(Direction direction, float ratio) {
@@ -49,8 +54,20 @@ public class FeedFragment extends Fragment{
         @Override
         public void onCardSwiped(Direction direction) {
             if(direction==Direction.Left){
+
                 Toast.makeText(context, "Left Swipe", Toast.LENGTH_SHORT).show();
             }else{
+
+                int liked_index = cardStackLayoutManager.getTopPosition()-1;
+                try {
+                    Profile liked_profile = profileList.get(liked_index).fetchIfNeeded();
+                    ParseUser liked_user = Objects.requireNonNull(liked_profile.fetchIfNeeded().getParseUser("user")).fetchIfNeeded();
+                    listener.addLikedUser(liked_user.fetchIfNeeded());
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 Toast.makeText(context, "Right Swipe", Toast.LENGTH_SHORT).show();
             }
 
@@ -109,7 +126,7 @@ public class FeedFragment extends Fragment{
         //TODO: Change RecyclerView to CardView(I think?) and implement swipe to match
         context=getContext();
         rvFeed = view.findViewById(R.id.rvFeed);
-        CardStackLayoutManager cardStackLayoutManager = new CardStackLayoutManager(context,cardStackListener);
+        cardStackLayoutManager = new CardStackLayoutManager(context,cardStackListener);
         cardStackLayoutManager.setDirections(Direction.HORIZONTAL);
         cardStackLayoutManager.setCanScrollVertical(false);
         cardStackLayoutManager.setScaleInterval(0.95f);
@@ -122,6 +139,7 @@ public class FeedFragment extends Fragment{
         profileList = new ArrayList<>();
 
         profileAdapter = new ProfileAdapter(profileList, context);
+
 
         rvFeed.setAdapter(profileAdapter);
 
@@ -152,5 +170,23 @@ public class FeedFragment extends Fragment{
     }
     public interface feedListener{
         void profileView();
+        void addLikedUser(ParseUser liked_user) throws ParseException;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+    @Override
+    public void onAttach(@NotNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FeedFragment.feedListener) {
+            listener = (FeedFragment.feedListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement FeedListener");
+        }
     }
 }

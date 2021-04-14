@@ -491,11 +491,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
+            ArrayList<ParseUser> liked_users = new ArrayList<>();
             ParseUser user = new ParseUser();
             user.setUsername(registerUsername);
             user.setEmail(registerEmail);
             user.setPassword(registerPassword);
             user.put(KEY_NAME,registerName);
+            user.put("liked_users",liked_users);
             user.put(KEY_PHONE, registerPhone);
             user.put(Profile.KEY_PRIMARYINSTRUMENT,primaryInstrument.getSelectedItem().toString().trim());
             user.put(Profile.KEY_PRIMARYGENRE,primaryGenre.getSelectedItem().toString().trim());
