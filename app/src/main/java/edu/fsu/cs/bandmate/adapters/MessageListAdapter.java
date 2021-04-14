@@ -113,12 +113,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     }
 
     public String getLastMessage(int position) throws ParseException {
-        /*ParseQuery<Conversation> query = ParseQuery.getQuery(Conversation.class);
-        query.include(Conversation.KEY_OBJECTID);
-        query.whereEqualTo(Conversation.KEY_OBJECTID,messages.get(position).getObjectId());
-        query.setLimit(1);
-        query.orderByDescending("createdAt");*/
-        //String message = messages.get(position).getMessages().get(messages.size()-1);
         ArrayList <Message> msg = (ArrayList<Message>) conversation.get(position).fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
         return(String) msg.get(msg.size()-1).fetchIfNeeded().get("body");
     }
