@@ -162,14 +162,15 @@ public class MessagesFragment extends Fragment {
         ParseQuery<ConversationList> query = ParseQuery.getQuery(ConversationList.class);
         query.include(ConversationList.KEY_USER);
         query.whereEqualTo(ConversationList.KEY_USER, user);
-        List<ConversationList> conversationLists = query.find();
+       ConversationList conversationList = query.getFirst();
 
-        if (conversationLists == null || conversationLists.size() == 0) {
+        if (conversationList == null) {
             ParseObject messagesList = ParseObject.create("ConversationList");
             messagesList.put(ConversationList.KEY_USER, ParseUser.getCurrentUser());
             messagesList.save();
         }
-        list = conversationLists.get(0);
+        assert conversationList != null;
+        list = conversationList.fetchIfNeeded();
         m_conversations = (ArrayList<Conversation>) list.fetchIfNeeded().get(ConversationList.KEY_CONVERSATION);
         if(m_conversations != null)
             initConversationItems();

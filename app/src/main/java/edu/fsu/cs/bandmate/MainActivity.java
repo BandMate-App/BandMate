@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements
     public void addLikedUser(ParseUser liked_user) throws ParseException {
         boolean match = false;
         ParseUser user = ParseUser.getCurrentUser();
-        user.fetchIfNeeded().add("liked_users",user.fetchIfNeeded());
+        user.fetchIfNeeded().add("liked_users",liked_user.fetchIfNeeded());
         user.saveEventually();
         ArrayList<ParseUser> liked_users_other =(ArrayList<ParseUser>) liked_user.fetchIfNeeded().get("liked_users");
 
@@ -312,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements
         ConversationList cvListSelf = query_self.getFirst().fetchIfNeeded();
 
         ParseQuery<ConversationList> query_other = ParseQuery.getQuery(ConversationList.class);
-        query_other.whereEqualTo(ConversationList.KEY_USER,user);
+        query_other.whereEqualTo(ConversationList.KEY_USER,matched_user.fetchIfNeeded());
         query_other.setLimit(1);
         ConversationList cvListOther = query_other.getFirst().fetchIfNeeded();
 
@@ -327,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements
         cvSelf.put(Conversation.KEY_MESSAGEOBJECT,messagesSelf);
         cvSelf.put("c_list1",cvListSelf.fetchIfNeeded());
         cvSelf.put("c_list2",cvListOther.fetchIfNeeded());
-
+        cvSelf.save();
 
         ParseObject cvOther = ParseObject.create("Conversation");
         cvOther.put(Conversation.KEY_SELF,matched_user.fetchIfNeeded());
@@ -336,6 +337,8 @@ public class MainActivity extends AppCompatActivity implements
         cvOther.put(Conversation.KEY_MESSAGEOBJECT,messagesOther);
         cvOther.put("c_list1",cvListOther.fetchIfNeeded());
         cvOther.put("c_list2",cvListSelf.fetchIfNeeded());
+        cvOther.save();
+        Toast.makeText(getApplicationContext(),"You have a new match!",Toast.LENGTH_SHORT).show();
 
 
         /*
@@ -345,6 +348,8 @@ public class MainActivity extends AppCompatActivity implements
         //TODO create a notification here
         cvListSelf.add(ConversationList.KEY_CONVERSATION,cvSelf);
         cvListOther.add(ConversationList.KEY_CONVERSATION,cvOther);
+        cvListSelf.save();
+        cvListOther.save();
 
     }
 }
