@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements
 
     public void onOpenProfile(){
         ProfileFragment fragment = new ProfileFragment();
-        String tag = ProfileFragment.class.getCanonicalName();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
+        //String tag = ProfileFragment.class.getCanonicalName();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment).commit();
     }
 
     /*

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,7 @@ public class FeedFragment extends Fragment {
     private void queryProfiles() {
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         query.include(Profile.KEY_USER);
+        query.whereNotEqualTo(Profile.KEY_USER,ParseUser.getCurrentUser());
         query.findInBackground(new FindCallback<Profile>() {
             @Override
             public void done(List<Profile> profiles, ParseException e) {

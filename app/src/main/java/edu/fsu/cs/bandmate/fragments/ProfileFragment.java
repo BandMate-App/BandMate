@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,7 @@ public class ProfileFragment extends Fragment {
     TextView profileSecondaryInstrument;
     TextView profileGender;
     ImageView profileImage;
+    Button buttonEdit;
 
     private String bundleUserName;
 
@@ -113,12 +115,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.buttonEdit).setOnClickListener(new View.OnClickListener() {
+        buttonEdit=view.findViewById(R.id.buttonEdit);
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 profileFragmentInterface.openEditProfileFragment();
             }
         });
+
         createUserProfileIfNeeded();
         profileUserName = view.findViewById(R.id.profileUsernameValue);
         profileFirstName = view.findViewById(R.id.profileFirstNameValue);
@@ -130,7 +134,16 @@ public class ProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImageValue);
 
         try {
-            queryProfile();
+            if (bundleUserName != null){
+                queryProfile(bundleUserName);
+                buttonEdit.setEnabled(false);
+                buttonEdit.setVisibility(View.GONE);
+            }
+            else{
+                queryProfile(user.getUsername());
+                buttonEdit.setEnabled(true);
+                buttonEdit.setVisibility(View.VISIBLE);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -187,14 +200,14 @@ public class ProfileFragment extends Fragment {
         }
     }//End of createUserProfileIfNeeded
 
-    private void queryProfile() throws ParseException {
+    private void queryProfile(String userName) throws ParseException {
+        ParseQuery<ParseUser> userParseQuery = ParseUser.getQuery();
+        userParseQuery.whereEqualTo("username", userName);
+        List<ParseUser> users = userParseQuery.find();
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         query.include(Profile.KEY_USER);
-        query.whereEqualTo(Profile.KEY_USER, user);
+        query.whereEqualTo(Profile.KEY_USER, users.get(0));
         List<Profile> userProfile = query.find();
-
-        if (userProfile.size() != 1)
-            Toast.makeText(getActivity(), "error getting profile", Toast.LENGTH_SHORT).show();
 
         StringBuilder sb = new StringBuilder();
         String username = user.getUsername();
@@ -213,7 +226,7 @@ public class ProfileFragment extends Fragment {
                 .load(userProfile.get(0).getImage().getUrl())
                 .into(profileImage);
 
-        profileUserName.setText(username);
+        profileUserName.setText(userName);
         profileFirstName.setText(name);
         profileBirthday.setText(birthday);
         profileGenre.setText(genre);
