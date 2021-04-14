@@ -26,7 +26,9 @@ import edu.fsu.cs.bandmate.fragments.MessagesFragment;
 import edu.fsu.cs.bandmate.fragments.ProfileFragment;
 import edu.fsu.cs.bandmate.fragments.RegisterFragment;
 
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -38,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemSelectedListener,
         ProfileFragment.ProfileFragmentInterface,
         EditProfileFragment.EditProfileFragmentInterface,
-          MessagesFragment.MessagesHost{
+          MessagesFragment.MessagesHost, FeedFragment.feedListener
+{
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
     private AlertDialog dialog;
@@ -62,6 +65,25 @@ public class MainActivity extends AppCompatActivity implements
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         Log.i(TAG,"User already logged in, proceding to home screen");
         if(ParseUser.getCurrentUser()!=null){
+            ParseQuery<ConversationList> query = ParseQuery.getQuery(ConversationList.class);
+            query.include(ConversationList.KEY_USER);
+            try {
+                query.whereEqualTo(ConversationList.KEY_USER, ParseUser.getCurrentUser().fetchIfNeeded());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            ConversationList conversationList = null;
+            try {
+                conversationList = query.getFirst();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (conversationList == null) {
+                ParseObject messagesList = ParseObject.create("ConversationList");
+                messagesList.put(ConversationList.KEY_USER, ParseUser.getCurrentUser());
+                messagesList.saveInBackground();
+            }
             onValidLogin();
         }
 
@@ -250,5 +272,79 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void ExitEditProfileFragment() {
         bottomNavigationView.setSelectedItemId(R.id.itProfile);
+    }
+
+    @Override
+    public void profileView() {
+
+    }
+
+    @Override
+    public void addLikedUser(ParseUser liked_user) throws ParseException {
+        boolean match = false;
+        ParseUser user = ParseUser.getCurrentUser();
+        user.fetchIfNeeded().add("liked_users",user.fetchIfNeeded());
+        user.saveEventually();
+        ArrayList<ParseUser> liked_users_other =(ArrayList<ParseUser>) liked_user.fetchIfNeeded().get("liked_users");
+
+        for (ParseUser u: liked_users_other){
+            if(u.fetchIfNeeded().getObjectId().equals(user.fetchIfNeeded().getObjectId())){
+                match = true;
+                break;
+            }
+        }
+        if(match){
+            createConversation(liked_user);
+        }
+
+    }
+
+    private void createConversation(ParseUser matched_user) throws ParseException {
+        ParseUser user = ParseUser.getCurrentUser().fetchIfNeeded();
+        matched_user.fetchIfNeeded();
+
+        /*
+        Query Each Conversation List
+         */
+        ParseQuery<ConversationList> query_self = ParseQuery.getQuery(ConversationList.class);
+        query_self.whereEqualTo(ConversationList.KEY_USER,user);
+        query_self.setLimit(1);
+        ConversationList cvListSelf = query_self.getFirst().fetchIfNeeded();
+
+        ParseQuery<ConversationList> query_other = ParseQuery.getQuery(ConversationList.class);
+        query_other.whereEqualTo(ConversationList.KEY_USER,user);
+        query_other.setLimit(1);
+        ConversationList cvListOther = query_other.getFirst().fetchIfNeeded();
+
+
+        /*
+        Initialize each Conversation Object
+         */
+        ParseObject cvSelf = ParseObject.create("Conversation");
+        cvSelf.put(Conversation.KEY_SELF,user.fetchIfNeeded());
+        cvSelf.put(Conversation.KEY_OTHER,matched_user.fetchIfNeeded());
+        ArrayList<Message> messagesSelf = new ArrayList<Message>();
+        cvSelf.put(Conversation.KEY_MESSAGEOBJECT,messagesSelf);
+        cvSelf.put("c_list1",cvListSelf.fetchIfNeeded());
+        cvSelf.put("c_list2",cvListOther.fetchIfNeeded());
+
+
+        ParseObject cvOther = ParseObject.create("Conversation");
+        cvOther.put(Conversation.KEY_SELF,matched_user.fetchIfNeeded());
+        cvOther.put(Conversation.KEY_OTHER,user.fetchIfNeeded());
+        ArrayList<Message> messagesOther = new ArrayList<Message>();
+        cvOther.put(Conversation.KEY_MESSAGEOBJECT,messagesOther);
+        cvOther.put("c_list1",cvListOther.fetchIfNeeded());
+        cvOther.put("c_list2",cvListSelf.fetchIfNeeded());
+
+
+        /*
+         Put each conversation Object in it's corresponding conversation list, now each user should be able to message each other
+         */
+
+        //TODO create a notification here
+        cvListSelf.add(ConversationList.KEY_CONVERSATION,cvSelf);
+        cvListOther.add(ConversationList.KEY_CONVERSATION,cvOther);
+
     }
 }
