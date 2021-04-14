@@ -30,6 +30,8 @@ android {
 }
 
 dependencies {
+    //Card Swipe
+    implementation "com.yuyakaido.android:card-stack-view:2.3.4"
     //Parse FCM SDK and Parse Bolts SDK for notifications
     implementation "com.github.parse-community.Parse-SDK-Android:fcm:1.26.0"
     implementation 'com.parse.bolts:bolts-android:1.4.0'

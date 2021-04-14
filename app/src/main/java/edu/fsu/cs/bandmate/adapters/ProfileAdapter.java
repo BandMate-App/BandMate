@@ -11,13 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.yuyakaido.android.cardstackview.CardStackView;
 
 import java.util.List;
 
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 
-public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
+public class ProfileAdapter extends CardStackView.Adapter<ProfileAdapter.ViewHolder> {
     List<Profile> profileList;
     Context context;
 
@@ -26,6 +27,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         this.profileList=profileList;
         this.context=context;
     }
+
+
 
     @NonNull
     @Override
