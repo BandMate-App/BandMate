@@ -13,10 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
+import com.yuyakaido.android.cardstackview.CardStackListener;
+import com.yuyakaido.android.cardstackview.CardStackView;
+import com.yuyakaido.android.cardstackview.Direction;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +32,49 @@ import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.adapters.ProfileAdapter;
 
 
-public class FeedFragment extends Fragment {
-    RecyclerView rvFeed;
+public class FeedFragment extends Fragment{
+    private static final String TAG = FeedFragment.class.getCanonicalName();
+    CardStackView rvFeed;
     ProfileAdapter profileAdapter;
     List<Profile> profileList;
     Context context;
+    CardStackListener cardStackListener = new CardStackListener() {
+        @Override
+        public void onCardDragging(Direction direction, float ratio) {
+
+        }
+
+        @Override
+        public void onCardSwiped(Direction direction) {
+            if(direction==Direction.Left){
+                Toast.makeText(context, "Left Swipe", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(context, "Right Swipe", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        @Override
+        public void onCardRewound() {
+
+        }
+
+        @Override
+        public void onCardCanceled() {
+
+        }
+
+        @Override
+        public void onCardAppeared(View view, int position) {
+            Log.i(TAG,"Appeared: "+profileList.get(position).getName()+" position: "+position);
+
+        }
+
+        @Override
+        public void onCardDisappeared(View view, int position) {
+            Log.i(TAG,"Disappeared: "+profileList.get(position).getName()+" position: "+position);
+        }
+    };
 
 
     public FeedFragment() {
@@ -57,8 +101,11 @@ public class FeedFragment extends Fragment {
         //TODO: Change RecyclerView to CardView(I think?) and implement swipe to match
         context=getContext();
         rvFeed = view.findViewById(R.id.rvFeed);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        rvFeed.setLayoutManager(linearLayoutManager);
+        CardStackLayoutManager cardStackLayoutManager = new CardStackLayoutManager(context,cardStackListener);
+        cardStackLayoutManager.setDirections(Direction.HORIZONTAL);
+        cardStackLayoutManager.setCanScrollVertical(false);
+
+        rvFeed.setLayoutManager(cardStackLayoutManager);
 
         profileList = new ArrayList<>();
 
@@ -72,6 +119,7 @@ public class FeedFragment extends Fragment {
     private void queryProfiles() {
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         query.include(Profile.KEY_USER);
+        query.whereNotEqualTo(Profile.KEY_USER,ParseUser.getCurrentUser());
         query.findInBackground(new FindCallback<Profile>() {
             @Override
             public void done(List<Profile> profiles, ParseException e) {
@@ -85,7 +133,11 @@ public class FeedFragment extends Fragment {
             }
         });
     }
-
+    public void onOpenProfile(){
+        ProfileFragment fragment = new ProfileFragment();
+        String tag = ProfileFragment.class.getCanonicalName();
+        getFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
+    }
     public interface feedListener{
         void profileView();
     }

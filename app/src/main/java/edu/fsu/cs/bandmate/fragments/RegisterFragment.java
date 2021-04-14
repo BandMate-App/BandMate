@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
@@ -60,6 +61,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",
             KEY_BIRTHDAY="Birthday",
             KEY_EMAIL = "Email";
+    private static final String TAG =RegisterFragment.class.getCanonicalName() ;
 
     final private int MIN_AGE = 13; // Minimum age according to COPPA
 
@@ -531,6 +533,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                 break;
                             default:
                                 //Todo: cover the other errors
+                                Log.e(TAG,"error with signup",e);
                                 Toast.makeText(getContext(), "Error with signup", Toast.LENGTH_SHORT).show();
                         }
                     }else{
@@ -544,6 +547,16 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                 }else {
                                     /*
                                       TODO, Do we need this object in addition to the Profile Object or should we get rid of User class?
+
+                                      User is a built-in Parse class that allows us to sign in in the background and everything
+                                      I just decided to separate the user and the profile
+                                      if we wanted to we could scrap the profile object but It would end up making the code a lot messier
+                                      I think its best if the user class stores the bare minimum to make it cleaner
+
+                                      Having the ParseUser and Profile class separate also allow us
+                                       to separate User X's private info (i.e. Email, username, Password)
+                                       from their outward facing profile.
+
                                      */
                                     //User newUser = createUser();
                                     listener.onRegisterComplete();

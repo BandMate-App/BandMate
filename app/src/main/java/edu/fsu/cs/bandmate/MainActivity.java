@@ -18,6 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 import edu.fsu.cs.bandmate.fragments.ChatFragment;
+import edu.fsu.cs.bandmate.fragments.EditProfileFragment;
 import edu.fsu.cs.bandmate.fragments.FeedFragment;
 import edu.fsu.cs.bandmate.fragments.LoginFragment;
 import edu.fsu.cs.bandmate.fragments.MainFragment;
@@ -30,9 +31,14 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-
-public class MainActivity extends AppCompatActivity implements MainFragment.mainFragmentListener,
-        LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener,BottomNavigationView.OnNavigationItemSelectedListener, MessagesFragment.MessagesHost {
+public class MainActivity extends AppCompatActivity implements
+        MainFragment.mainFragmentListener,
+        LoginFragment.LoginFragmentListener,
+        RegisterFragment.RegisterFragmentListener,
+        BottomNavigationView.OnNavigationItemSelectedListener,
+        ProfileFragment.ProfileFragmentInterface,
+        EditProfileFragment.EditProfileFragmentInterface,
+          MessagesFragment.MessagesHost{
     private Boolean m_loggedIn = false;
     private BottomNavigationView bottomNavigationView;
     private AlertDialog dialog;
@@ -165,26 +171,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     public void onCancel() {
         onMain();
     }
-
-
-
-
-    /*@Override
-    public void onConversationSelected(List<Object> messages, ParseUser match, Bitmap picture) {
-        Bundle bundle = new Bundle();
-        ArrayList<String> temp= new ArrayList<String>();
-        for (int i = 0; i < messages.size();i++){
-            temp.add(messages.get(i).toString());
-        }
-        bundle.putStringArrayList(ConversationList.KEY_CONVERSATION,temp);
-
-       ChatFragment fragment = new ChatFragment();
-        String tag = ChatFragment.class.getCanonicalName();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment).commitNow();
-    }
-    */
-
-
     /*
       End fragment interface function implementations
      */
@@ -215,8 +201,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
 
     public void onOpenProfile(){
         ProfileFragment fragment = new ProfileFragment();
-        String tag = ProfileFragment.class.getCanonicalName();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
+        //String tag = ProfileFragment.class.getCanonicalName();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment).commit();
     }
 
     /*
@@ -253,5 +239,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.main
     @Override
     public boolean isConversationSelected(String conversationId) {
         return false;
+    }
+}
+    @Override
+    public void openEditProfileFragment() {
+        EditProfileFragment editProfileFragment = new EditProfileFragment();
+        //String tag = EditProfileFragment.class.getCanonicalName();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,editProfileFragment).commit();
+    }
+
+    @Override
+    public void ExitEditProfileFragment() {
+        bottomNavigationView.setSelectedItemId(R.id.itProfile);
     }
 }
