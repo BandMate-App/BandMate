@@ -179,8 +179,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRegisterComplete() {
+        bottomNavigationView.setSelectedItemId(R.id.itProfile);
 
         m_loggedIn = true;
+        /*
         onFeed();
         getSupportFragmentManager().executePendingTransactions();
         /*
@@ -274,10 +276,6 @@ public class MainActivity extends AppCompatActivity implements
         bottomNavigationView.setSelectedItemId(R.id.itProfile);
     }
 
-    @Override
-    public void profileView() {
-
-    }
 
     @Override
     public void addLikedUser(ParseUser liked_user) throws ParseException {

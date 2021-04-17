@@ -240,14 +240,8 @@ public class FeedFragment extends Fragment{
 
     }
 
-    public void onOpenProfile(){
-        ProfileFragment fragment = new ProfileFragment();
-        String tag = ProfileFragment.class.getCanonicalName();
-        getFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
-    }
 
     public interface feedListener{
-        void profileView();
         void addLikedUser(ParseUser liked_user) throws ParseException;
 
         void openEditProfileFragment();
