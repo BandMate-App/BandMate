@@ -111,7 +111,11 @@ public class FeedFragment extends Fragment{
             if(intProfileOnTop==profileList.size()-1){
                 profileList.clear();
                 profileAdapter.notifyItemRangeRemoved(0,intProfileOnTop+1);
-                queryProfiles();
+                try {
+                    queryProfiles();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -196,7 +200,7 @@ public class FeedFragment extends Fragment{
                     try {
                         profileForCurrentUser = objects.get(0);
                         queryProfiles();
-                    }catch(IndexOutOfBoundsException exception){
+                    }catch(IndexOutOfBoundsException | ParseException exception){
                         createUserProfileIfNeeded();
                     }
                 }
@@ -206,7 +210,8 @@ public class FeedFragment extends Fragment{
 
     }
 
-    private void queryProfiles() {
+    private void queryProfiles() throws ParseException {
+        profileForCurrentUser.fetchIfNeeded();
         ParseRelation<ParseObject> relationWhoILike = profileForCurrentUser.getRelation(Profile.KEY_WHO_I_LIKE);
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         relationWhoILike.getQuery().include(Profile.KEY_OBJECT_ID).findInBackground(new FindCallback<ParseObject>() {
@@ -302,7 +307,11 @@ public class FeedFragment extends Fragment{
                             }
                         });
                         builder.create().show();
-                        queryProfiles();
+                        try {
+                            queryProfiles();
+                        } catch (ParseException parseException) {
+                            parseException.printStackTrace();
+                        }
                     }
                 }
             });

@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onRegisterComplete() {
 
         m_loggedIn = true;
-        onFeed();
+        onOpenProfile();
         getSupportFragmentManager().executePendingTransactions();
         /*
          Update the appropriate views to be visible to the user

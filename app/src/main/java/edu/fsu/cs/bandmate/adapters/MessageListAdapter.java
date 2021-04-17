@@ -114,7 +114,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     @Override
     public int getItemCount() {
-        return conversation.size();
+        if (conversation != null) {
+            return conversation.size();
+        }
+        else{
+            return 0;
+        }
     }
 
 }
