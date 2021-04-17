@@ -37,6 +37,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private TextView body;
     private ImageView iv_me;
     private TextView name;
+    private Bitmap icon_other;
 
     private static final int outgoing=0;
     private static final int incoming=1;
@@ -75,7 +76,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         @Override
         void bindMessage(Message message) {
-            iv_other.setImageBitmap(icon);
+            iv_other.setImageBitmap(icon_other);
             body.setText(message.getbody());
             name.setText(message.getUser());
         }
@@ -99,10 +100,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
     }
 
-    public ChatAdapter(Context context, String username, ArrayList<Message> conversation,Bitmap icon) throws ParseException {
+    public ChatAdapter(Context context, String username, ArrayList<Message> conversation,Bitmap icon,Bitmap icon_other) throws ParseException {
         this.conversation = conversation;
         this.username = username;
         this.icon = icon;
+        this.icon_other = icon_other;
     }
 
     @NotNull
@@ -111,12 +113,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         LayoutInflater inflater = LayoutInflater.from(context);
 
         if(viewType == outgoing){
-            View contactView = inflater.inflate(R.layout.message_incoming,parent,false);
-            return new IncomingMessageViewHolder(contactView);
-        }
-        else if(viewType == incoming){
             View contactView = inflater.inflate(R.layout.message_outgoing,parent,false);
             return new OutgoingMessageViewHolder(contactView);
+        }
+        else if(viewType == incoming){
+            View contactView = inflater.inflate(R.layout.message_incoming,parent,false);
+            return new IncomingMessageViewHolder(contactView);
         }
         else{
             throw new IllegalArgumentException("Unknown view type");
