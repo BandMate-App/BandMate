@@ -230,6 +230,9 @@ public class MessagesFragment extends Fragment {
                 else if(!lastMessage.get(i).equals(temp))
                     lastMessage.set(i,temp);
             }
+            else{
+                lastMessage.add("");
+            }
         }
         list.put(ConversationList.KEY_CONVERSATION,m_conversations);
         list.saveInBackground();
