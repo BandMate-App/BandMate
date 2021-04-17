@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements
             onMain();
         }
         else if(id == R.id.quit){
-            //TODO confrim dialog
             confirmQuit();
             dialog.show();
         }
