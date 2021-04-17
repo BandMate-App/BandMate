@@ -38,7 +38,6 @@ Default Constructor sets all variables to invalid values
     public static final String KEY_PROFILEPICTURE="ProfilePicture";
     public static final String KEY_USER="user";
     public static final String KEY_FIRSTNAME="FirstName";
-    public static final String KEY_lASTNAME="LastName";
     public static final String KEY_PRIMARY_INSTRUMENT = "PrimaryInstrument";
     public static final String KEY_SECONDARY_INSTRUMENTS = "SecondaryInstruments";
     public static final String KEY_GENRE="Genre";
