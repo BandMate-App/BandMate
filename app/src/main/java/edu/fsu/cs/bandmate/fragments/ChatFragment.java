@@ -2,6 +2,7 @@ package edu.fsu.cs.bandmate.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import edu.fsu.cs.bandmate.Conversation;
 import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.Message;
+import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.SelectedConversation;
 import edu.fsu.cs.bandmate.adapters.ChatAdapter;
@@ -99,7 +101,11 @@ public class ChatFragment extends Fragment{
         try {
             setConversationOther();
             currentConversation = (ArrayList<Message>) selected.conversation.fetchIfNeeded().get(Conversation.KEY_MESSAGEOBJECT);
-            adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),currentConversation,selected.picture);
+            Profile mprofile = (Profile)currentUser.fetchIfNeeded().get("myProfile");
+            mprofile.fetchIfNeeded();
+            byte[] data = mprofile.getImage().getData();
+            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
+            adapter = new ChatAdapter(getActivity(),selected.match.getUsername(),currentConversation,selected.picture,bmp);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -138,7 +144,6 @@ public class ChatFragment extends Fragment{
                 message.put(Message.KEY_BODY,data);
 
                 //add the new message to the matches conversation object
-                /*
                 ParseObject otherMessage = ParseObject.create("Message");
                 otherMessage.put(Message.KEY_USER,ParseUser.getCurrentUser().getUsername());
                 otherMessage.put(Message.KEY_BODY,data);
@@ -150,11 +155,10 @@ public class ChatFragment extends Fragment{
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
- */
                 try {
                     selected.conversation.fetchIfNeeded();
                     selected.conversation.add(Conversation.KEY_MESSAGEOBJECT,message.fetchIfNeeded());
-                    conversationOther.add(Conversation.KEY_MESSAGEOBJECT,message.fetchIfNeeded());
+                    conversationOther.add(Conversation.KEY_MESSAGEOBJECT,otherMessage.fetchIfNeeded());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
