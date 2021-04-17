@@ -22,7 +22,6 @@ import android.content.Context;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -33,11 +32,14 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import edu.fsu.cs.bandmate.Conversation;
+import edu.fsu.cs.bandmate.ConversationList;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -45,11 +47,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
-    public static final String KEY_PHONE="Phone",KEY_NAME="Name",KEY_USER="User",
-            KEY_PRIMARY_INSTRUMENT="Primary Instrument",KEY_PRIMARY_GENRE="Primary Genre",
-            KEY_SECONDARY_INSTRUMENTS = "Secondary Instrument",KEY_SECONDARY_GENRES="Secondary Genres",
-            KEY_BIRTHDAY="Birthday",
-            KEY_EMAIL = "Email";
+    public static final String KEY_PHONE="Phone",KEY_NAME="Name",KEY_USER="User";
+
     private static final String TAG =RegisterFragment.class.getCanonicalName() ;
 
     final private int MIN_AGE = 13; // Minimum age according to COPPA
@@ -123,8 +122,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
         /*
          Get string-arrays from resource and update views
-         TODO Set up list of instruments/genres programmatically,
-          maybe need a dialog to prevent the screen from getting crowded
+
          */
         String [] instruments;
         String [] genres;
@@ -267,6 +265,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             onSelectSecondaryGenre();
     }
 
+    /*
+    Checks all fields are not empty and have valid input types
+     */
     private Boolean formComplete(){
         int age = 0;
         boolean valid=true;
@@ -407,7 +408,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     public interface RegisterFragmentListener{
-        void onRegisterComplete();
+        void onRegisterComplete() throws ParseException;
         void onCancel();
     }
 
@@ -520,7 +521,20 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                 if(e!=null){
                                     Toast.makeText(getContext(), "Error Logging in", Toast.LENGTH_SHORT).show();
                                 }else {
-                                    listener.onRegisterComplete();
+                                    try {
+                                        /*
+                                         After the user objects created, create their associated conversation objects
+                                         */
+                                        ParseObject messagesList = ParseObject.create("ConversationList");
+                                        messagesList.put(ConversationList.KEY_USER, ParseUser.getCurrentUser());
+                                        messagesList.save();
+                                        ArrayList<Conversation> temp = new ArrayList<>();
+                                        messagesList.put(ConversationList.KEY_CONVERSATION, temp);
+                                        messagesList.saveEventually();
+                                        listener.onRegisterComplete();
+                                    } catch (ParseException parseException) {
+                                        parseException.printStackTrace();
+                                    }
                                 }
                             }
                         });
@@ -532,6 +546,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
+    /*
+     Creates the alert dialog. Only allows 3 choices that are not the primary genre
+     */
     private void onSelectSecondaryGenre(){
         /*
          Initialize Variables to be shown in the dialog
@@ -599,6 +616,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         dialog.show();
     }
 
+    /*
+  Creates the alert dialog. Only allows 3 choices that are not the primary instrument
+  */
     private void onSelectSecondaryInstrument(){
                 /*
          Initialize Variables to be shown in the dialog

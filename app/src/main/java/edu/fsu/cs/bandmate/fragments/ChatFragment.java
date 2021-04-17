@@ -56,6 +56,9 @@ public class ChatFragment extends Fragment{
     ArrayList<Message> currentConversation;
     boolean firstload;
     Handler myHandler = new android.os.Handler();
+    /*
+     Polls the server for new message objects in the current conversation
+     */
     Runnable RefreshChatRunnable = new Runnable() {
         @Override
         public void run() {
@@ -67,6 +70,9 @@ public class ChatFragment extends Fragment{
             myHandler.postDelayed(this, TimeUnit.SECONDS.toMillis(3));
         }
     };
+    /*
+    Override onResume and onPause to prevent polling while the app is not in use.
+     */
     @Override
     public void onResume() {
 
@@ -120,6 +126,9 @@ public class ChatFragment extends Fragment{
 
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        /*
+        Sends the message to the server and updates the recycler view
+         */
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,6 +187,9 @@ public class ChatFragment extends Fragment{
         return view;
     }
 
+    /*
+     Checks the server for new message objects
+     */
     public void refreshChat() throws ParseException {
         ArrayList<Message>  current = (ArrayList<Message>) selected.conversation.fetch().get(Conversation.KEY_MESSAGEOBJECT);
         assert current != null;
@@ -199,6 +211,9 @@ public class ChatFragment extends Fragment{
         }
     }
 
+    /*
+    Gets the other users conversation assoicated with this chat
+     */
     public void setConversationOther() throws ParseException {
         ParseQuery<Conversation> query = ParseQuery.getQuery(Conversation.class);
         ParseUser other = selected.match.fetchIfNeeded();

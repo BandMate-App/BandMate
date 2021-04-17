@@ -95,6 +95,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    /*
+     Check the server for this username/password combination, go to feed fragment if it exists
+     */
     public void onLogin(){
         String uname= username.getText().toString();
         String pass= password.getText().toString();

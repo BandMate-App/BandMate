@@ -43,6 +43,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private static final int incoming=1;
 
 
+    /*
+     Tells whether a message is incoming or outgoing
+     */
     @Override
     public int getItemViewType(int position){
         try {
@@ -56,6 +59,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         return -1;
     }
 
+    /*
+    Abstract view holder class has two types, incoming and outgoing view holders
+     */
     public abstract class  ChatViewHolder extends RecyclerView.ViewHolder{
 
         public ChatViewHolder(@NonNull View itemView) {
@@ -64,6 +70,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         abstract void bindMessage(Message message);
     }
 
+    /*
+     Loads the appropriate data using incomingmessage.xml
+     */
     public class IncomingMessageViewHolder extends ChatViewHolder{
 
         public IncomingMessageViewHolder(@NonNull View itemView) {
@@ -82,6 +91,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
     }
 
+    /*
+    Loads the appropriate data to outgoingmessage.xml
+     */
     public class OutgoingMessageViewHolder extends ChatViewHolder{
 
 
@@ -107,6 +119,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         this.icon_other = icon_other;
     }
 
+    /*
+      Decides which view to load based off the view type
+     */
     @NotNull
     @Override public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         Context context = parent.getContext();
@@ -141,6 +156,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         return conversation.size();
     }
 
+    /*
+     Determines if a message is incoming or outgoing based off the messages associated username.
+     */
     private boolean isMe(int position) throws ParseException {
         Message message = conversation.get(position).fetchIfNeeded();
         return message.fetchIfNeeded().get(Message.KEY_USER).toString().replace("\"", "") != null && message.fetchIfNeeded().get(Message.KEY_USER).toString().replace("\"", "").equals(username);

@@ -56,6 +56,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     }
 
+    //Uses the messages fragment listener to pass the Selected Conversation to the chat fragment.
+
     public void setListener(MessagesFragment.MessagesHost listener){
         this.listener = listener;
     }

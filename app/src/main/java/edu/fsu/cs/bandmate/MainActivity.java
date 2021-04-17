@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRegisterComplete() {
-
         m_loggedIn = true;
         onOpenProfile();
         getSupportFragmentManager().executePendingTransactions();
@@ -258,10 +257,7 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment).commitNow();
     }
 
-    @Override
-    public boolean isConversationSelected(String conversationId) {
-        return false;
-    }
+
     @Override
     public void openEditProfileFragment() {
         EditProfileFragment editProfileFragment = new EditProfileFragment();
@@ -272,11 +268,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void ExitEditProfileFragment() {
         bottomNavigationView.setSelectedItemId(R.id.itProfile);
-    }
-
-    @Override
-    public void profileView() {
-
     }
 
     @Override

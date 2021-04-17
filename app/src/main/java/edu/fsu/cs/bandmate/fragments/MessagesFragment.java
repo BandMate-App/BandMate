@@ -53,6 +53,9 @@ public class MessagesFragment extends Fragment {
     CardView conversationItem;
     MessagesHost listener;
     Handler myHandler = new android.os.Handler();
+    /*
+     Polls the server while the fragment is running, checks for new conversation objects in the conversationlist
+     */
     Runnable RefreshMessagesRunnable = new Runnable() {
         @Override
         public void run() {
@@ -64,6 +67,9 @@ public class MessagesFragment extends Fragment {
             myHandler.postDelayed(this, TimeUnit.SECONDS.toMillis(3));
         }
     };
+    /*
+    Override onResume and onPause to prevent indefinite polling
+     */
     @Override
     public void onResume() {
 
@@ -139,8 +145,6 @@ public class MessagesFragment extends Fragment {
 
     public interface MessagesHost {
         public void onConversationClick(SelectedConversation selected);
-
-        public boolean isConversationSelected(final String conversationId);
     }
 
     /*
@@ -150,7 +154,7 @@ public class MessagesFragment extends Fragment {
         ParseQuery<ConversationList> query = ParseQuery.getQuery(ConversationList.class);
         query.include(ConversationList.KEY_USER);
         query.whereEqualTo(ConversationList.KEY_USER, user);
-       ConversationList conversationList = query.getFirst();
+        ConversationList conversationList = query.getFirst();
 
         if (conversationList == null) {
             ParseObject messagesList = ParseObject.create("ConversationList");
@@ -168,11 +172,9 @@ public class MessagesFragment extends Fragment {
     }
 
 
-
-    private void loadMessages() {
-        ParseQuery<Conversation> query = ParseQuery.getQuery(Conversation.class);
-    }
-
+    /*
+     Initializes all the data on view creation to be sent to the adapter class
+     */
     private void initConversationItems() throws ParseException {
         for (Conversation c : m_conversations) {
             //messages.add(c.fetchIfNeeded().getList(Conversation.KEY_MESSAGES));
@@ -198,6 +200,9 @@ public class MessagesFragment extends Fragment {
         }
     }
 
+    /*
+     Called by the runnable, checks the conversationlist for new conversation objects.
+     */
     public void refreshMessages() throws ParseException {
 
         if(list.fetch().getUpdatedAt().after(lastUpdated)){
@@ -207,6 +212,9 @@ public class MessagesFragment extends Fragment {
         }
 
 
+        /*
+        Gets the last message of each conversation to send to the adapter
+         */
     public void getLastMessage() throws ParseException {
         for (int i = 0; i <m_conversations.size();i++){
             ArrayList<Message> msg = (ArrayList<Message>)m_conversations.get(i).fetch().get(Conversation.KEY_MESSAGEOBJECT);
