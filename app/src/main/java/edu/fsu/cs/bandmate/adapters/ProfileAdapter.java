@@ -34,14 +34,25 @@ public class ProfileAdapter extends CardStackView.Adapter<ProfileAdapter.ViewHol
     List<Profile> profileList;
     Context context;
 
-
+    /**
+     * Constructor for ProfileAdapter
+     *
+     * @param profileList
+     * @param context
+     */
     public ProfileAdapter(List<Profile> profileList, Context context) {
         this.profileList=profileList;
         this.context=context;
     }
 
 
-
+    /**
+     * Inflates feed_item to hold
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,22 +60,28 @@ public class ProfileAdapter extends CardStackView.Adapter<ProfileAdapter.ViewHol
         return new ViewHolder(v);
     }
 
+    /**
+     * Binds the element to the holder.
+     * Sets an onclicklistener to load a profile fragment
+     * for the element that was selected.
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Profile profile = profileList.get(position);
         holder.bind(profile);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: profile info: "+profile.getName());
-                Bundle bundle = new Bundle();
-                bundle.putString("profileUsername", profile.getUser().getUsername());
-                ProfileFragment profileFragment = new ProfileFragment();
-                profileFragment.setArguments(bundle);
+        holder.itemView.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: profile info: "+profile.getName());
+            Bundle bundle = new Bundle();
+            bundle.putString("profileUsername", profile.getUser().getUsername());
+            ProfileFragment profileFragment = new ProfileFragment();
+            profileFragment.setArguments(bundle);
 
-                AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.fragmentFrame, profileFragment).commit();
-            }
+            AppCompatActivity activity = (AppCompatActivity) v.getContext();
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentFrame, profileFragment).commit();
         });
 
     }
@@ -73,16 +90,31 @@ public class ProfileAdapter extends CardStackView.Adapter<ProfileAdapter.ViewHol
 
     }
 
+    /**
+     * returns the a count that represents the number of
+     * profiles in the profileList
+     *
+     * @return
+     */
     @Override
     public int getItemCount() {
         return profileList.size();
     }
 
+    /**
+     * Loads a complete list of profiles into the profile list and
+     * triggers event for dataset change.
+     * @param profiles
+     */
     public void addAll(List<Profile> profiles) {
         profileList.addAll(profiles);
         notifyDataSetChanged();
     }
 
+    /**
+     * Declares class for holding the elements of a profile in the feed.
+     * Defines how the profiles are bound in the holder.
+     */
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView ivProfilePic;
         TextView tvName;
