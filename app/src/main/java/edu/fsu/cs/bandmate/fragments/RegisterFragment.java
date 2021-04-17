@@ -6,10 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.fragment.app.Fragment;
@@ -31,25 +28,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import edu.fsu.cs.bandmate.ConversationList;
-import edu.fsu.cs.bandmate.MainActivity;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
-import edu.fsu.cs.bandmate.User;
-import edu.fsu.cs.bandmate.profileMap;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -309,6 +298,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             phoneNumber.setError("Can not be empty");
             //TODO check for valid phone number format
         }
+        if (!android.util.Patterns.PHONE.matcher(phoneNumber.getText().toString().trim()).matches() || phoneNumber.getText().toString().length() != 10){
+            valid = false;
+            phoneNumber.setError("Please enter a valid phone number");
+        }
 
         if (genderSelector.getCheckedRadioButtonId() == -1) {
             valid = false;
@@ -346,34 +339,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         return valid;
     }
 
-    private User createUser(){
-        String [] instruments = getResources().getStringArray(R.array.instruments);
-        String [] genres = getResources().getStringArray(R.array.genres);
-        RadioButton genderButton = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
-        profileMap profileMap = new profileMap();
-        ArrayList<Integer> secondaryInstruments = new ArrayList<>();
-        ArrayList<Integer> secondaryGenres = new ArrayList<>();
-        int pGenre = profileMap.mapGenre(primaryGenre.getSelectedItem().toString().trim());
-
-        int pInstrument = profileMap.mapInstrument(primaryInstrument.getSelectedItem().toString().trim());
-        int selectedGender = profileMap.mapGender(genderButton.getText().toString().trim());
-        if(! secondaryInstrumentPrompt.getHint().equals(instruments[0])){
-            String [] selected = secondaryInstrumentPrompt.getHint().toString().split(" ");
-            for (String s : selected) {
-                secondaryInstruments.add(profileMap.mapInstrument(s));
-            }
-        }
-        if(! secondaryGenrePrompt.getHint().equals(genres[0])){
-            String [] selected = secondaryGenrePrompt.getHint().toString().split(" ");
-            for (String s : selected) {
-                secondaryGenres.add(profileMap.mapGenre(s));
-            }
-        }
-        return new User(etUsername.getText().toString().trim(),fName.getText().toString().trim(),
-                lName.getText().toString().trim(),eMail.getText().toString().trim(),
-                password.getText().toString().trim(),phoneNumber.getText().toString().trim(),
-                selectedGender,pInstrument,secondaryInstruments,secondaryGenres);
-    }
 
     /*
      Used for birthday, secondary instrument, and secondary genres
@@ -455,7 +420,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
      */
     final Calendar calendar = Calendar.getInstance();
     int day = calendar.get(Calendar.DAY_OF_MONTH);
-    int month = calendar.get(Calendar.MONTH) + 1;
+    int month = calendar.get(Calendar.MONTH);
     int year = calendar.get(Calendar.YEAR);
     datePicker = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -506,15 +471,24 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             Button gender = getActivity().findViewById(genderSelector.getCheckedRadioButtonId());
             user.put(Profile.KEY_GENDER,gender.getText().toString().trim());
 
-            if(!secondaryInstrumentPrompt.getHint().equals(getResources().getString(R.string.secondaryInstrumentPrompt))) {
+            if(!secondaryInstrumentPrompt.getHint().toString().trim().equals(getResources().getString(R.string.secondaryInstrumentPrompt))) {
                 String[] instruments = secondaryInstrumentPrompt.getHint().toString().split(" ");
                 List<String> i = Arrays.asList(instruments);
                 List<String> newList = new ArrayList<String>(i);
                 user.put(Profile.KEY_SECONDARYINSTRUMENTS,newList);
             }
+            else{
+                ArrayList<String> temp = new ArrayList<>();
+                user.put(Profile.KEY_SECONDARYINSTRUMENTS,temp);
+            }
 
-            if(!secondaryGenrePrompt.getHint().equals(getResources().getString(R.string.secondaryGenrePrompt)))
-                user.put(Profile.KEY_SECONDARYGENRE,Arrays.asList(secondaryGenrePrompt.getHint().toString().split(" ")));
+            if(!secondaryGenrePrompt.getHint().toString().trim().equals(getResources().getString(R.string.secondaryGenrePrompt))) {
+                user.put(Profile.KEY_SECONDARYGENRE, Arrays.asList(secondaryGenrePrompt.getHint().toString().split(" ")));
+            }
+            else{
+                ArrayList<String> temp = new ArrayList<>();
+                user.put(Profile.KEY_SECONDARYGENRE,temp);
+            }
 
 
             user.signUpInBackground(new SignUpCallback() {
@@ -534,7 +508,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                 password.setError("Invalid Password");
                                 break;
                             default:
-                                //Todo: cover the other errors
                                 Log.e(TAG,"error with signup",e);
                                 Toast.makeText(getContext(), "Error with signup", Toast.LENGTH_SHORT).show();
                         }
@@ -547,20 +520,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                                 if(e!=null){
                                     Toast.makeText(getContext(), "Error Logging in", Toast.LENGTH_SHORT).show();
                                 }else {
-                                    /*
-                                      TODO, Do we need this object in addition to the Profile Object or should we get rid of User class?
-
-                                      User is a built-in Parse class that allows us to sign in in the background and everything
-                                      I just decided to separate the user and the profile
-                                      if we wanted to we could scrap the profile object but It would end up making the code a lot messier
-                                      I think its best if the user class stores the bare minimum to make it cleaner
-
-                                      Having the ParseUser and Profile class separate also allow us
-                                       to separate User X's private info (i.e. Email, username, Password)
-                                       from their outward facing profile.
-
-                                     */
-                                    //User newUser = createUser();
                                     listener.onRegisterComplete();
                                 }
                             }

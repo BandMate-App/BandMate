@@ -14,15 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.getstream.sdk.chat.utils.DateFormatter;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -30,16 +25,10 @@ import com.parse.ParseUser;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Time;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import edu.fsu.cs.bandmate.Conversation;
@@ -48,7 +37,6 @@ import edu.fsu.cs.bandmate.Message;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.SelectedConversation;
-import edu.fsu.cs.bandmate.User;
 import edu.fsu.cs.bandmate.adapters.MessageListAdapter;
 
 public class MessagesFragment extends Fragment {

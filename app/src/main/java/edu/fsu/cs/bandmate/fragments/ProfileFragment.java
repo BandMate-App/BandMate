@@ -1,8 +1,5 @@
 package edu.fsu.cs.bandmate.fragments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,15 +8,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.parse.FindCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -37,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.fsu.cs.bandmate.R;
-import edu.fsu.cs.bandmate.User;
 
 /**
  * A simple {@link Fragment} subclass.
