@@ -1,6 +1,8 @@
 package edu.fsu.cs.bandmate.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,7 +19,10 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
+import com.parse.SaveCallback;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
@@ -31,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import edu.fsu.cs.bandmate.MainActivity;
 import edu.fsu.cs.bandmate.Profile;
 import edu.fsu.cs.bandmate.R;
 import edu.fsu.cs.bandmate.adapters.ProfileAdapter;
@@ -43,6 +49,7 @@ public class FeedFragment extends Fragment{
     List<Profile> profileList;
     feedListener listener;
     Context context;
+    Profile profileForCurrentUser;
     int intProfileOnTop;
     CardStackLayoutManager cardStackLayoutManager;
     CardStackListener cardStackListener = new CardStackListener() {
@@ -68,8 +75,38 @@ public class FeedFragment extends Fragment{
                     e.printStackTrace();
                 }
 
-                Toast.makeText(context, "Right Swipe", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(context, "Right Swipe Liked", Toast.LENGTH_SHORT).show();
+                Log.i(TAG,"Liked: "+profileList.get(intProfileOnTop).getName()+" position: "+intProfileOnTop);
+                profileForCurrentUser.likeAUser(profileList.get(intProfileOnTop));
+
+                Profile likedProfile = profileList.get(intProfileOnTop);
+
+                        likedProfile.getRelation(Profile.KEY_WHO_I_LIKE)
+                        .getQuery()
+                        .whereEqualTo(Profile.KEY_OBJECT_ID,profileForCurrentUser.getObjectId())
+                        .findInBackground(new FindCallback<ParseObject>() {
+                            @Override
+                            public void done(List<ParseObject> objects, ParseException e) {
+                                if(e!=null){
+                                    Log.e(TAG,"Error Querying for matches: ");
+                                }else if(objects.size()!=0){
+                                    likedProfile.getRelation(Profile.KEY_MUTUAL_MATCH).add(profileForCurrentUser);
+                                    likedProfile.saveInBackground();
+                                    profileForCurrentUser.getRelation(Profile.KEY_MUTUAL_MATCH).add(likedProfile);
+                                    profileForCurrentUser.saveInBackground();
+                                    AlertDialog.Builder builder =new AlertDialog.Builder(getContext());
+                                    builder.setTitle("It's A Match!");
+                                    builder.setMessage("Why don't you try sending your new match a message?");
+                                    builder.create().show();
+                                }
+                            }
+                        });
+
             }
+
+
+
 
             if(intProfileOnTop==profileList.size()-1){
                 profileList.clear();
@@ -138,30 +175,72 @@ public class FeedFragment extends Fragment{
 
         profileList = new ArrayList<>();
 
+
+
         profileAdapter = new ProfileAdapter(profileList, context);
 
 
         rvFeed.setAdapter(profileAdapter);
 
-        queryProfiles();
+        ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
+        query.include(Profile.KEY_USER);
+        query.include(Profile.KEY_WHO_LIKES_ME);
+        query.include(Profile.KEY_WHO_I_LIKE);
+        query.whereEqualTo(Profile.KEY_USER,ParseUser.getCurrentUser());
+        query.findInBackground(new FindCallback<Profile>() {
+            @Override
+            public void done(List<Profile> objects, ParseException e) {
+                if(e!=null){
+                    Log.e(TAG,"Error Getting Profile", e);
+                }else{
+                    try {
+                        profileForCurrentUser = objects.get(0);
+                        queryProfiles();
+                    }catch(IndexOutOfBoundsException exception){
+                        createUserProfileIfNeeded();
+                    }
+                }
+
+            }
+        });
+
     }
 
     private void queryProfiles() {
+        ParseRelation<ParseObject> relationWhoILike = profileForCurrentUser.getRelation(Profile.KEY_WHO_I_LIKE);
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
-        query.include(Profile.KEY_USER);
-        query.whereNotEqualTo(Profile.KEY_USER,ParseUser.getCurrentUser());
-        query.findInBackground(new FindCallback<Profile>() {
+        relationWhoILike.getQuery().include(Profile.KEY_OBJECT_ID).findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<Profile> profiles, ParseException e) {
+            public void done(List<ParseObject> objects, ParseException e) {
                 if(e!=null){
-                    Log.e("ParseQuery", "Error Querying Profiles", e);
-                    return;
-                }
+                    Log.e(TAG,"Error:" ,e);
+                }else{
+                    List<String> exclusions = new ArrayList<>();
+                    for(ParseObject object: objects){
+                        exclusions.add(object.getObjectId());
+                    }
+                    query.include(Profile.KEY_USER);
+                    query.include(Profile.KEY_WHO_LIKES_ME);
+                    query.include(Profile.KEY_WHO_I_LIKE);
+                    query.whereNotEqualTo(Profile.KEY_USER,ParseUser.getCurrentUser());
+                    query.whereNotContainedIn(Profile.KEY_OBJECT_ID,exclusions);
+                    query.findInBackground(new FindCallback<Profile>() {
+                        @Override
+                        public void done(List<Profile> profiles, ParseException e) {
+                            if(e!=null){
+                                Log.e("ParseQuery", "Error Querying Profiles", e);
+                                return;
+                            }
 
-                profileAdapter.addAll(profiles);
-                profileAdapter.notifyItemRangeInserted(0,profiles.size());
+                            profileAdapter.addAll(profiles);
+                            profileAdapter.notifyItemRangeInserted(0,profiles.size());
+                        }
+                    });
+                }
             }
         });
+
+
     }
     public void onOpenProfile(){
         ProfileFragment fragment = new ProfileFragment();
@@ -171,6 +250,8 @@ public class FeedFragment extends Fragment{
     public interface feedListener{
         void profileView();
         void addLikedUser(ParseUser liked_user) throws ParseException;
+
+        void openEditProfileFragment();
     }
 
     @Override
@@ -189,4 +270,42 @@ public class FeedFragment extends Fragment{
                     + " must implement FeedListener");
         }
     }
+
+    public void createUserProfileIfNeeded(){
+        ParseUser user = ParseUser.getCurrentUser();
+        if(user.getParseObject("myProfile")==null){
+            Profile prof = new Profile();
+            prof.putUser(user);
+            prof.putName(user.getString("Name"));
+            prof.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if(e!=null){
+                        Toast.makeText(getActivity(), "Error creating profile", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getActivity(), "Profile successfully created", Toast.LENGTH_SHORT).show();
+                        user.put("myProfile",prof);
+                        user.saveInBackground();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Welcome to Band Mate!");
+                        builder.setMessage("It looks like you haven't set up your profile yet, would you like to do that now?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                listener.openEditProfileFragment();
+                            }
+                        });
+                        builder.setNegativeButton("Maybe Later", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.create().show();
+                        queryProfiles();
+                    }
+                }
+            });
+        }
+    }//End of createUserProfileIfNeeded
 }

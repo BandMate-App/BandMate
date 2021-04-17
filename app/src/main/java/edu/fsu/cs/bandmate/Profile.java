@@ -29,6 +29,9 @@ public class Profile extends ParseObject {
     public static final String KEY_CONVERSATIONS = "conversations";
     public static final String KEY_MP3="MP3";
     public static final String KEY_BIO="Bio";
+    public static final String KEY_WHO_I_LIKE="WhoILike";
+    public static final String KEY_WHO_LIKES_ME="WhoLikesMe";
+    public static final String KEY_MUTUAL_MATCH ="MututalMatch";
 
 
     //TODO: Refactor "getImage" to "getProfilePicture" after merge for consistency
@@ -75,5 +78,13 @@ public class Profile extends ParseObject {
     }
     public void putProfileMP3(ParseFile parseFileProfileMP3){
         this.put(KEY_MP3,parseFileProfileMP3);
+    }
+
+
+    public void likeAUser(Profile profileToBeLiked){
+        profileToBeLiked.getRelation(KEY_WHO_LIKES_ME).add(this);
+        this.getRelation(KEY_WHO_I_LIKE).add(profileToBeLiked);
+        profileToBeLiked.saveInBackground();
+        this.saveInBackground();
     }
 }
