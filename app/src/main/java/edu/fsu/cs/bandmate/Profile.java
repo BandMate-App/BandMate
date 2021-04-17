@@ -15,6 +15,12 @@ import java.io.File;
 
 @ParseClassName("Profile")
 public class Profile extends ParseObject {
+    /**
+     * Dereference the column names for ParseObjects relational
+     * associations in back4app backend service.
+     *
+     *
+     */
     public static final String KEY_PROFILEPICTURE="ProfilePicture";
     public static final String KEY_USER="user";
     public static final String KEY_NAME="Name";
@@ -33,12 +39,12 @@ public class Profile extends ParseObject {
     public static final String KEY_WHO_LIKES_ME="WhoLikesMe";
     public static final String KEY_MUTUAL_MATCH ="MututalMatch";
 
-
-    //TODO: Refactor "getImage" to "getProfilePicture" after merge for consistency
+    /**
+     * accessors for elements of profile
+     *
+     * @return
+     */
     public ParseFile getImage(){
-        return getParseFile(KEY_PROFILEPICTURE);
-    }
-    public ParseFile getProfilePicture(){
         return getParseFile(KEY_PROFILEPICTURE);
     }
     public ParseFile getProfileMP3(){
@@ -81,6 +87,12 @@ public class Profile extends ParseObject {
     }
 
 
+    /**
+     * Creates association to link profiles.
+     * Relational association is saved in the background.
+     *
+     * @param profileToBeLiked
+     */
     public void likeAUser(Profile profileToBeLiked){
         profileToBeLiked.getRelation(KEY_WHO_LIKES_ME).add(this);
         this.getRelation(KEY_WHO_I_LIKE).add(profileToBeLiked);

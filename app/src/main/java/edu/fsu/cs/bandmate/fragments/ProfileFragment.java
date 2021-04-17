@@ -41,8 +41,7 @@ public class ProfileFragment extends Fragment {
 
     ProfileFragmentInterface profileFragmentInterface;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -75,7 +74,7 @@ public class ProfileFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -85,6 +84,11 @@ public class ProfileFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Gets bundle if its not null and retrieves
+     * the profileUsername.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +102,14 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Inflates fragment_profile on creation of view
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,6 +117,13 @@ public class ProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
+    /**
+     * When view is created, set component views for ProfileFragment
+     * enable and show edit button if the logged in user profile is being shown,
+     * or disable and hide if loaded user from bundle.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -146,6 +165,10 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Ensures context is as expected when fragments is attached
+     * @param context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -156,6 +179,11 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * creates user profile is its needed
+     * as determined by whether the user object
+     * contains myProfile object.
+     */
     public void createUserProfileIfNeeded(){
         user = ParseUser.getCurrentUser();
         if(user.getParseObject("myProfile")==null){
@@ -193,6 +221,14 @@ public class ProfileFragment extends Fragment {
         }
     }//End of createUserProfileIfNeeded
 
+    /**
+     * Queries backend service for user, then loads profile.
+     * Once the ParseUser and Profile are populated, set the
+     * appropriate values in the profile view.
+     *
+     * @param userName
+     * @throws ParseException
+     */
     private void queryProfile(String userName) throws ParseException {
         ParseQuery<ParseUser> userParseQuery = ParseUser.getQuery();
         userParseQuery.whereEqualTo("username", userName);
@@ -229,6 +265,9 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    /**
+     * Interface to open edit profile fragment
+     */
     public interface ProfileFragmentInterface{
         public void openEditProfileFragment();
     }

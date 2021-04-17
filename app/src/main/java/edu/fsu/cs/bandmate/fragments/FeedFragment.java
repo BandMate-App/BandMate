@@ -58,24 +58,24 @@ public class FeedFragment extends Fragment{
 
         }
 
+        //Listen to see if the profile was swiped off screen
+        //If the swipe was a left swipe no action is taken
+        //if the swipe was a right swipe the profile is "liked" and the database updated
+        //if the other profile had already liked the user, then the users are added to each others mutual matches
+        //and the user that committed the "final like" gets an alert notifying them of the match
         @Override
         public void onCardSwiped(Direction direction) {
             if(direction==Direction.Left){
-
                 Toast.makeText(context, "Left Swipe", Toast.LENGTH_SHORT).show();
             }else{
-
                 int liked_index = cardStackLayoutManager.getTopPosition()-1;
                 try {
                     Profile liked_profile = profileList.get(liked_index).fetchIfNeeded();
                     ParseUser liked_user = Objects.requireNonNull(liked_profile.fetchIfNeeded().getParseUser("user")).fetchIfNeeded();
                     listener.addLikedUser(liked_user.fetchIfNeeded());
-
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
-
                 Toast.makeText(context, "Right Swipe Liked", Toast.LENGTH_SHORT).show();
                 Log.i(TAG,"Liked: "+profileList.get(intProfileOnTop).getName()+" position: "+intProfileOnTop);
                 profileForCurrentUser.likeAUser(profileList.get(intProfileOnTop));
@@ -102,20 +102,11 @@ public class FeedFragment extends Fragment{
                                 }
                             }
                         });
-
             }
-
-
-
-
             if(intProfileOnTop==profileList.size()-1){
                 profileList.clear();
                 profileAdapter.notifyItemRangeRemoved(0,intProfileOnTop+1);
-                try {
-                    queryProfiles();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                queryProfiles();
             }
         }
 
@@ -129,11 +120,11 @@ public class FeedFragment extends Fragment{
 
         }
 
+        //Logging for debugging and tracking the currently visible profile
         @Override
         public void onCardAppeared(View view, int position) {
             Log.i(TAG,"Appeared: "+profileList.get(position).getName()+" position: "+position);
             intProfileOnTop=position;
-
         }
 
         @Override
@@ -164,9 +155,10 @@ public class FeedFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //TODO: Change RecyclerView to CardView(I think?) and implement swipe to match
         context=getContext();
         rvFeed = view.findViewById(R.id.rvFeed);
+        //Initializing the layout manager for the feed
+        //so that the profiles can only be swiped horizontally
         cardStackLayoutManager = new CardStackLayoutManager(context,cardStackListener);
         cardStackLayoutManager.setDirections(Direction.HORIZONTAL);
         cardStackLayoutManager.setCanScrollVertical(false);
@@ -175,17 +167,15 @@ public class FeedFragment extends Fragment{
         cardStackLayoutManager.setVisibleCount(3);
         cardStackLayoutManager.setStackFrom(StackFrom.TopAndRight);
 
+
         rvFeed.setLayoutManager(cardStackLayoutManager);
-
         profileList = new ArrayList<>();
-
-
-
         profileAdapter = new ProfileAdapter(profileList, context);
-
-
         rvFeed.setAdapter(profileAdapter);
 
+        //Querying to get the current user's profile,
+        //If for some reason the user does not have an existing profile (note: profiles should be
+        // automatically created upon registration), a new profile is created.
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         query.include(Profile.KEY_USER);
         query.include(Profile.KEY_WHO_LIKES_ME);
@@ -200,18 +190,20 @@ public class FeedFragment extends Fragment{
                     try {
                         profileForCurrentUser = objects.get(0);
                         queryProfiles();
-                    }catch(IndexOutOfBoundsException | ParseException exception){
+                    }catch(IndexOutOfBoundsException exception){
                         createUserProfileIfNeeded();
                     }
                 }
-
             }
         });
 
     }
 
-    private void queryProfiles() throws ParseException {
-        profileForCurrentUser.fetchIfNeeded();
+    //The queryProfiles function looks for new profiles to populate the user's feed
+    //cautions are taken so that the user does not encounter their own profile and that
+    //the user doesn't encounter a profile that they have already liked.
+    //However, a user can re-encounter a profile that they had previously skipped.
+    private void queryProfiles() {
         ParseRelation<ParseObject> relationWhoILike = profileForCurrentUser.getRelation(Profile.KEY_WHO_I_LIKE);
         ParseQuery<Profile> query = ParseQuery.getQuery(Profile.class);
         relationWhoILike.getQuery().include(Profile.KEY_OBJECT_ID).findInBackground(new FindCallback<ParseObject>() {
@@ -247,24 +239,22 @@ public class FeedFragment extends Fragment{
 
 
     }
-    public void onOpenProfile(){
-        ProfileFragment fragment = new ProfileFragment();
-        String tag = ProfileFragment.class.getCanonicalName();
-        getFragmentManager().beginTransaction().replace(R.id.fragmentFrame,fragment,tag).commit();
-    }
+
+
     public interface feedListener{
-        void profileView();
         void addLikedUser(ParseUser liked_user) throws ParseException;
 
         void openEditProfileFragment();
     }
 
+    //detaching an interface
     @Override
     public void onDetach() {
         super.onDetach();
         listener = null;
     }
 
+    //Attaching an interface
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(context);
@@ -276,6 +266,13 @@ public class FeedFragment extends Fragment{
         }
     }
 
+    //This function is unlikely to ever be called but is placed here anyway for safety concerns.
+    //Upon registration a profile is created for the newly registered user, the profile contains a
+    //user's outward facing information such as name, biography, etc.
+    //If the profile fails to be created and the user makes it to the feed fragment this function
+    //is meant to act as a failsafe to prevent the app from crashing.
+    //I would have liked to put this code serverside so the chance of profile creation failing is
+    //lower but I don't have a strong enough understanding of javascript required for serverside code.
     public void createUserProfileIfNeeded(){
         ParseUser user = ParseUser.getCurrentUser();
         if(user.getParseObject("myProfile")==null){
@@ -307,11 +304,7 @@ public class FeedFragment extends Fragment{
                             }
                         });
                         builder.create().show();
-                        try {
-                            queryProfiles();
-                        } catch (ParseException parseException) {
-                            parseException.printStackTrace();
-                        }
+                        queryProfiles();
                     }
                 }
             });
